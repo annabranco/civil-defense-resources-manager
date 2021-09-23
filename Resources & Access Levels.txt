@@ -1,0 +1,60 @@
+ACCESS LEVELS FOR RESOURCES
+===========================
+
+VOLUNTEERS                        MIN ACCESS LEVEL
+- View full own volunteer data          VOL
+- View limited data of volunteers       MAN
+- View full data of volunteers          ADM
+- Create a volunteer                    ADM
+- Update own volunteer data             VOL
+- Update any volunteer                  MAN
+- Delete a volunteer                    ADM
+
+VEHICLES
+- Create a vehicle                      MAN
+- Update a vehicle                      MAN
+- Delete a vehicle                      ADM
+
+SERVICES
+- View informative services data        !NO
+- View limited services data            VOL
+- View full services data               MAN
+- Apply for a service                   VOL
+- Create a service                      MAN
+- Update a service                      MAN
+- Delete a service                      MAN
+
+GROUPS
+- View groups                           VOL
+- Create group                          ADM
+- Update group                          ADM
+- Delete group                          ADM
+
+ROLES
+- View role                             VOL
+- Create role                           ADM
+- Update role                           ADM
+- Delete role                           ADM
+
+
+SPECIFIC VIEWS
+==============
+VOLUNTEERS
+- Informative (name, group)
+- Management (name, group, access level, basic contact info)
+- Admin (name, group, access level, full contact info, identification)
+
+VEHICLES
+- Informative (type, brand, license)
+- Management (type, brand, license, year, incidences, identification)
+
+SERVICES
+- Informative (type, place, date)
+- Detailed (type, place, date, resources, volunteers)
+- Management (type, place, date, resources, volunteers with contact info, focal point data)
+
+GROUPS
+- Full view (type, name, volunteers, vehicles)
+
+ROLES
+- Full view (type, name, volunteers)

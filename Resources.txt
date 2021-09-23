@@ -1,0 +1,69 @@
+RESOURCES
+=========
+
+VOLUNTEERS          TYPE                    DEFAULT VALUE
+- id**              sequential number           auto
+- name*             string                       -
+- surnames*         string                       -
+- birthday*         date                         -
+- group*            (FK: groups.id)           [Generic]
+- role*             string                   [Volunteer]
+- document*         string                       -
+- address*          string                       -
+- email             string                       -
+- phone1*           number                       -
+- phone2            number                       -
+- active*           boolean                     true
+
+VEHICLES
+- id**             sequential number            auto
+- name*            string                         -
+- brand*           string                         -
+- license*         string                         -
+- year*            number                         -
+- next_itv*        date                           -
+- incidences       string                         -
+- active*          boolean                       true
+
+SERVICES
+- id**             sequential number             auto
+- type*            string                         -
+- place*           string                         -
+- date*            date                           -
+- vehicles_num*    number                         0
+- vehicles*        (FK: vehicles.id)              -
+- volunteers_num*  number                         1
+- volunteers*      (FK: volunteers.id)            -
+- contact_name     string                         -
+- contact_phone    string                         -
+
+GROUPS
+- id**            sequential number              auto
+- type*           string                          -
+- name*           string                          -
+- volunteers      (FK: volunteers.id)             -
+- vehicles        (FK: vehicles.id)               -
+
+GROUPS
+- id**            sequential number              auto
+- name*           string                          -
+- volunteers      (FK: volunteers.id)             -
+
+
+** Primary Key
+* Required
+
+DEFAULT PRECONFIGURED GROUPS
+- EMS
+- Logistics
+- Communications
+- Social
+- Administrative
+- Education
+- Generic
+
+DEFAULT PRECONFIGURED ROLES     ACCESS LEVEL
+- Volunteer                         VOL
+- Team Leader                       MAN
+- Manager                           MAN
+- Commander                         ADM

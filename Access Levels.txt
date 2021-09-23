@@ -1,0 +1,22 @@
+ACCESS LEVELS
+==============
+
+!NO - Unregistered users (any user who visits the page)
+- Can view informative data of any services registered
+
+VOL - Volunteers (all registered volunteers)
+- Can view limited data of services available
+- Can apply for any active service where there is vacancy
+- Can view resources.
+- Can view and update their own data
+- Can view groups information
+
+MAN - Managers  (Team Leaders and Managers)
+- Can create, update and archive volunteers
+- Can create, update and archive vehicles
+- Can create, update and delete services
+- Can view groups information
+
+ADM - Admin (Commander)
+- Can view, create, update, archive and delete all resources
+- Can view, create, update and delete groups
