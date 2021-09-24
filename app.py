@@ -240,19 +240,49 @@ def delete_volunteer(id):
 # endregion
 
 # region ROLES
+@app.route('/roles/')
+@app.route('/roles')
+def get_roles():
+    db_data = Role.query.all()
+    data = [gr.info() for gr in db_data]
+    return jsonify({
+        'success': True,
+        'roles': data
+        })
+
 @app.route('/roles/<int:id>')
 def get_role(id):
     db_data = Role.query.filter(Role.id==id).one_or_none()
+    if db_data is None:
+        raise RequestError(404, constants.ERROR_MESSAGES['rol_not_found'])
     data = db_data.info()
-    return jsonify({ 'Role': data })
+    return jsonify({
+        'success': True,
+        'role': data
+        })
 # endregion
 
 # region GROUPS
+@app.route('/groups/')
+@app.route('/groups')
+def get_groups():
+    db_data = Group.query.all()
+    data = [gr.info() for gr in db_data]
+    return jsonify({
+        'success': True,
+        'groups': data
+        })
+
 @app.route('/groups/<int:id>')
 def get_group(id):
     db_data = Group.query.filter(Group.id==id).one_or_none()
+    if db_data is None:
+        raise RequestError(404, constants.ERROR_MESSAGES['gr_not_found'])
     data = db_data.info()
-    return jsonify({ 'Group': data })
+    return jsonify({
+        'success': True,
+        'group': data
+    })
 # endregion
 
 # region VEHICLES
@@ -261,13 +291,6 @@ def get_vehicle(id):
     db_data = Vehicle.query.filter(Vehicle.id==id).one_or_none()
     data = db_data.fullData()
     return jsonify({ 'Vehicle': data })
-# endregion
-
-# region BAD REQUESTS
-@app.route('/quizzes/')
-@app.route('/questions/')
-def incorrect_request():
-    abort(400)
 # endregion
 
 # region ERRORS HANDLING

@@ -17,6 +17,8 @@ HTTP_RESPONSES = {
 
 ERROR_MESSAGES = {
     "vol_not_found": 'There are no volunteers with the provided id.',
+    "gr_not_found": 'There are no groups with the provided id.',
+    "rol_not_found": 'There are no roles with the provided id.',
     "body_needed": 'A data object should be sent on the request.',
     "missing_data": 'There are missing required data on the object sent.',
     "invalid_role": 'The role id provided in not valid.',
