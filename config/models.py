@@ -49,7 +49,7 @@ class Volunteer(db.Model):
     def info(self):
         groups_list = [gr.name for gr in self.groups]
         db_role = Role.query.filter(Role.id==self.role).one_or_none()
-        role_name = db_role.name if db_role else 'Generic'
+        role_name = db_role.name if db_role else 'Volunteer'
         return {
           'name': self.name,
           'surnames': self.surnames,
@@ -61,7 +61,7 @@ class Volunteer(db.Model):
     def details(self):
         groups_list = [gr.name for gr in self.groups]
         db_role = Role.query.filter(Role.id==self.role).one_or_none()
-        role_name = db_role.name if db_role else 'Generic'
+        role_name = db_role.name if db_role else 'Volunteer'
         return {
             'name': self.name,
             'surnames': self.surnames,
@@ -76,7 +76,7 @@ class Volunteer(db.Model):
     def fullData(self):
         groups_list = [gr.name for gr in self.groups]
         db_role = Role.query.filter(Role.id==self.role).one_or_none()
-        role_name = db_role.name if db_role else 'Generic'
+        role_name = db_role.name if db_role else 'Volunteer'
         return {
             'name': self.name,
             'surnames': self.surnames,

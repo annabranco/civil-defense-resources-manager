@@ -52,16 +52,16 @@ ROLES
 * Required
 
 DEFAULT PRECONFIGURED GROUPS
-- EMS
-- Logistics
-- Communications
-- Social
-- Administrative
-- Education
-- Generic
+- 1. EMS
+- 2. Logistics
+- 3. Communications
+- 4. Social
+- 5. Administrative
+- 6. Education
+- 7. Generic
 
 DEFAULT PRECONFIGURED ROLES     ACCESS LEVEL
-- Volunteer                         VOL
-- Team Leader                       MAN
-- Manager                           MAN
-- Commander                         ADM
+- 1. Volunteer                         VOL
+- 2. Team Leader                       MAN
+- 3. Manager                           MAN
+- 4. Commander                         ADM

@@ -56,10 +56,10 @@ def create_dummy_resources():
         document = '12345678-W',
         address = 'Calle de la Suerte, 26',
         email = 'anna@prote.ww',
-        phone1 = '12345678',
-        phone2 =  '87654321',
+        phone1 = 12345678,
+        phone2 =  87654321,
         active = True,
-        role = 1,
+        role = 4,
         groups = [group_ems, group_com, group_soc, group_adm]
     )
     squad_leader = Volunteer(
@@ -69,11 +69,11 @@ def create_dummy_resources():
         document = '12345678-W',
         address = 'Calle de la Vida, 12',
         email = 'debra@prote.ww',
-        phone1 = '12345678',
+        phone1 = 12345678,
         phone2 =  None,
         active = True,
-        role = 1,
-        groups = [group_ems]
+        role = 3,
+        groups = [group_log, group_adm]
     )
     manager = Volunteer(
         name = 'David',
@@ -82,11 +82,11 @@ def create_dummy_resources():
         document = '12345678-W',
         address = 'Calle de la Cruz, 1',
         email = 'algibez@prote.ww',
-        phone1 = '12345678',
+        phone1 = 12345678,
         phone2 =  None,
         active = True,
-        role = 1,
-        groups = [group_ems]
+        role = 2,
+        groups = [group_gen]
     )
     team_member = Volunteer(
         name = 'Cris',
@@ -95,11 +95,11 @@ def create_dummy_resources():
         document = '12345678-W',
         address = 'Calle de la Anunciación, 31',
         email = 'cris@prote.ww',
-        phone1 = '12345678',
+        phone1 = 12345678,
         phone2 =  None,
         active = True,
         role = 1,
-        groups = [group_ems]
+        groups = [group_soc, group_edu]
     )
 
     db.session.add(vir)
