@@ -22,7 +22,7 @@ VEHICLES
 - license*         string                         -
 - year*            number                         -
 - next_itv*        date                           -
-- incidences       string                         -
+- incidents       string                         -
 - active*          boolean                       true
 
 SERVICES
@@ -39,12 +39,10 @@ SERVICES
 
 GROUPS
 - id**            sequential number (PK)        auto
-- type*           string                          -
 - name*           string                          -
 - volunteers      (FK: volunteers.id)             -
-- vehicles        (FK: vehicles.id)               -
 
-GROUPS
+ROLES
 - id**            sequential number (PK)        auto
 - name*           string                          -
 - volunteers      (FK: volunteers.id)             -
