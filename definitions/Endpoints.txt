@@ -1,0 +1,34 @@
+ENDPOINTS
+=========
+
+
+      ACTION                   ENDPOINT              METHOD          BODY
+- View all volunteers       /volunteers               GET
+- View one volunteer        /volunteers/<id>          GET
+- Create a volunteer        /volunteers               POST        Volunteer obj.
+- Update a volunteer        /volunteers/<id>          PATCH
+- Delete a volunteer        /volunteers/<id>          DELETE
+
+- View all vehicles         /vehicles                 GET
+- View one vehicleo         /vehicles/<id>            GET
+- Create a vehicle          /vehicles                 POST        Vehicle obj.
+- Update a vehicle          /vehicles/<id>            PATCH
+- Delete a vehicle          /vehicles/<id>            DELETE
+
+- View all groups           /groups                   GET
+- View one group            /groups/<id>              GET
+- Create a group            /groups                   POST        Group obj.
+- Update a group            /groups/<id>              PATCH
+- Delete a group            /groups/<id>              DELETE
+
+- View all roles            /roles                    GET
+- View one role             /roles/<id>               GET
+- Create a role             /roles                    POST        Role obj.
+- Update a role             /roles/<id>               PATCH
+- Delete a role             /roles/<id>               DELETE
+
+- View all services         /services                 GET
+- View one service          /services/<id>            GET
+- Create a service          /services                 POST        Service obj.
+- Update a service          /services/<id>            PATCH
+- Delete a service          /services/<id>            DELETE

@@ -11,6 +11,8 @@ VOLUNTEERS                        MIN ACCESS LEVEL
 - Delete a volunteer                    ADM
 
 VEHICLES
+- View basic info                       VOL
+- View full vehicle info                MAN
 - Create a vehicle                      MAN
 - Update a vehicle                      MAN
 - Delete a vehicle                      ADM

@@ -119,10 +119,3 @@ def db_drop_and_create_all():
 
     # Uncomment it for testing
     create_dummy_resources()
-
-    anna = Volunteer.query.filter(Volunteer.name=='Anna').one_or_none()
-    print(anna.name)
-    print(anna.role)
-    print(anna.groups)
-    role = Role.query.filter(Role.id==1).one_or_none()
-    print(role.name)

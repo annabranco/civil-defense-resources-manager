@@ -1,4 +1,5 @@
 from .setup import db
+import json
 
 volunteer_groups = db.Table('volunteer_groups',
     db.Column('volunteer', db.Integer, db.ForeignKey('volunteers.id')),
@@ -46,20 +47,26 @@ class Volunteer(db.Model):
         db.session.commit()
 
     def info(self):
+        groups_list = [gr.name for gr in self.groups]
+        db_role = Role.query.filter(Role.id==self.role).one_or_none()
+        role_name = db_role.name if db_role else 'Generic'
         return {
           'name': self.name,
           'surnames': self.surnames,
-          'groups': self.groups,
-          'role': self.role,
+          'groups': groups_list,
+          'role': role_name,
           'active': self.active
         }
 
     def details(self):
+        groups_list = [gr.name for gr in self.groups]
+        db_role = Role.query.filter(Role.id==self.role).one_or_none()
+        role_name = db_role.name if db_role else 'Generic'
         return {
             'name': self.name,
             'surnames': self.surnames,
-            'groups': self.groups,
-            'role': self.role,
+            'groups': groups_list,
+            'role': role_name,
             'birthday': self.birthday,
             'phone1': self.phone1,
             'phone2': self.phone2,
@@ -67,11 +74,14 @@ class Volunteer(db.Model):
         }
 
     def fullData(self):
+        groups_list = [gr.name for gr in self.groups]
+        db_role = Role.query.filter(Role.id==self.role).one_or_none()
+        role_name = db_role.name if db_role else 'Generic'
         return {
             'name': self.name,
             'surnames': self.surnames,
-            'groups': self.groups,
-            'role': self.role,
+            'groups': groups_list,
+            'role': role_name,
             'birthday': self.birthday,
             'document': self.document,
             'address': self.address,
@@ -210,6 +220,7 @@ class Group(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
+    volunteers = db.relationship('Volunteer', secondary=volunteer_groups, backref=db.backref('group_id'))
 
     def __init__(self, name, volunteers):
       self.name = name
@@ -227,12 +238,14 @@ class Group(db.Model):
       db.session.commit()
 
     def info(self):
-      volunteers_list = [{'name': vol['name'], 'surname': vol[surname]} for vol in jsonloads(self.volunteers)]
-
-      return {
-        'name': self.name,
-        'volunteers': volunteers_list,
-      }
+        roles_list = {
+          rol.id: rol.name for rol in Role.query.all()
+        }
+        volunteers_list = [{ 'name': f'{vol.name} {vol.surnames}', 'role': roles_list[vol.role] } for vol in self.volunteers]
+        return {
+          'name': self.name,
+          'volunteers': volunteers_list,
+        }
 
 
 class Role(db.Model):
@@ -241,7 +254,6 @@ class Role(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(120), nullable=False)
     volunteers = db.relationship('Volunteer', backref=db.backref('role_id'))
-    # TODO: Make users be able to check all related volunteers when accessing Role class
 
     def __init__(self, name, volunteers):
         self.name = name
@@ -259,8 +271,11 @@ class Role(db.Model):
         db.session.commit()
 
     def info(self):
-        volunteers_list = [{'name': vol['name'], 'surname': vol[surname]} for vol in jsonloads(self.volunteers)]
-
+        groups_list = {
+          gr.id: gr.name for gr in Group.query.all()
+        }
+        print(groups_list)
+        volunteers_list = [{ 'name': f'{vol.name} {vol.surnames}', 'groups': [ groups_list[gr.id] for gr in vol.groups] } for vol in self.volunteers]
         return {
           'name': self.name,
           'volunteers': volunteers_list,
