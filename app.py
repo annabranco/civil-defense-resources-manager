@@ -14,7 +14,7 @@ setup_db(app)
 CORS(app)
 
 # --- Uncomment to re/set the db. ALL DATA WILL BE LOST!
-db_drop_and_create_all()
+# db_drop_and_create_all()
 
 # region CUSTOM ERRORS
 class RequestError(Exception):
