@@ -1,10 +1,10 @@
-from flask import Flask, request, jsonify, abort
+from flask import Flask, abort, jsonify, request
 from flask_cors import CORS
 from auth.auth import AuthError, requires_auth
 from config.setup import setup_db
 from config.populate_db import db_drop_and_create_all
-from config.models import Volunteer, Role, Group, Vehicle
-from config.config import DATE_FORMAT
+from config.models import Group, Role, Service, Vehicle, Volunteer
+from config.config import DATE_FORMAT, FULL_DATE_FORMAT
 from datetime import datetime
 import os
 import constants
@@ -329,7 +329,7 @@ def get_vehicle(id):
     data = db_data.info()
     return jsonify({
         'success': True,
-        'Vehicle': data
+        'vehicle': data
         })
 
 @app.route('/vehicles', methods=['POST'])
@@ -374,7 +374,7 @@ def create_vehicle():
 
         return jsonify({
             'success': True,
-            'volunteer': new_vehicle.fullData()
+            'vehicle': new_vehicle.fullData()
             }), 201
 
     except RequestError as error:
@@ -453,7 +453,7 @@ def update_vehicle(id):
 
         return jsonify({
             'success': True,
-            'volunteer': new_vehicle.fullData()
+            'vehicle': new_vehicle.fullData()
             })
 
     except RequestError as error:
@@ -468,6 +468,187 @@ def delete_vehicle(id):
         raise RequestError(404, constants.ERROR_MESSAGES['veh_not_found'])
     return ('', 204)
 # endregion
+
+
+# region SERVICES
+@app.route('/services/')
+@app.route('/services')
+def get_services():
+    db_data = Service.query.all()
+    data = [vol.info() for vol in db_data]
+    return jsonify({
+        'success': True,
+        'services': data
+        })
+
+@app.route('/services/<int:id>', methods=['GET'])
+def get_service(id):
+    db_data = Service.query.filter(Service.id==id).one_or_none()
+    if db_data is None:
+        raise RequestError(404, constants.ERROR_MESSAGES['ser_not_found'])
+
+    data = db_data.details()
+    return jsonify({
+        'success': True,
+        'service': data
+        })
+
+@app.route('/services', methods=['POST'])
+def create_service():
+    try:
+        body = request.get_json()
+        if body is None:
+            raise RequestError(400, constants.ERROR_MESSAGES['body_needed'])
+        try:
+            name = body['name']
+            place = body['place']
+            date = body['date']
+            vehicles_num = body['vehicles_num']
+            volunteers_num = body['volunteers_num']
+            contact_name = body.get('contact_name')
+            contact_phone = body.get('contact_phone')
+        except:
+            raise RequestError(400, constants.ERROR_MESSAGES['missing_data'])
+
+        if any([
+            type(name) != str,
+            type(place) != str,
+            type(vehicles_num) != int,
+            type(volunteers_num) != int,
+            (contact_name is not None and type(contact_name) != str),
+            (contact_phone is not None and type(contact_phone) != int),
+        ]):
+            raise RequestError(400, constants.ERROR_MESSAGES['wrong_type'])
+
+        try:
+            datetime.strptime(date, FULL_DATE_FORMAT)
+        except:
+            raise RequestError(400, constants.ERROR_MESSAGES['bad_full_date'])
+
+        new_service = Service(
+            name = name,
+            place = place,
+            date = date,
+            vehicles_num = vehicles_num,
+            volunteers_num = volunteers_num,
+            contact_name = contact_name,
+            contact_phone = contact_phone,
+            vehicles = [],
+            volunteers = [],
+        )
+
+        return jsonify({
+            'success': True,
+            'service': new_service.fullData()
+            }), 201
+
+    except RequestError as error:
+        raise RequestError(error.status, error.message)
+    except:
+        abort(422)
+
+@app.route('/services/<id>', methods=['PATCH'])
+def update_service(id):
+    try:
+        body = request.get_json()
+        if body is None:
+            raise RequestError(400, constants.ERROR_MESSAGES['body_needed'])
+
+        edited_service = Service.query.filter(Service.id==id).one_or_none()
+        if edited_service is None:
+            raise RequestError(404, constants.ERROR_MESSAGES['ser_not_found'])
+
+        try:
+            name = body['name']
+            place = body['place']
+            date = body['date']
+            vehicles_num = body['vehicles_num']
+            volunteers_num = body['volunteers_num']
+            vehicles = body['vehicles']
+            volunteers = body['volunteers']
+            contact_name = body.get('contact_name')
+            contact_phone = body.get('contact_phone')
+            stringified_date_on_server = edited_service.date.strftime(FULL_DATE_FORMAT)
+        except:
+            raise RequestError(400, constants.ERROR_MESSAGES['missing_data'])
+
+        try:
+            stringified_date_on_body = datetime.strptime(date, FULL_DATE_FORMAT).strftime(FULL_DATE_FORMAT)
+        except:
+            raise RequestError(400, constants.ERROR_MESSAGES['bad_full_date'])
+
+        if all([
+            name == edited_service.name,
+            place == edited_service.place,
+            stringified_date_on_body == stringified_date_on_server,
+            vehicles_num == edited_service.vehicles_num,
+            volunteers_num == edited_service.volunteers_num,
+            contact_name == edited_service.contact_name,
+            contact_phone == edited_service.contact_phone,
+            vehicles == [veh.id for veh in edited_service.vehicles],
+            volunteers == [vol.id for vol in edited_service.volunteers],
+        ]):
+            return jsonify({
+            'success': False,
+            'message': constants.ERROR_MESSAGES['no_change']
+            }), 200
+
+        if any([
+            type(name) != str,
+            type(place) != str,
+            type(vehicles_num) != int,
+            type(volunteers_num) != int,
+            (contact_name is not None and type(contact_name) != str),
+            (contact_phone is not None and type(contact_phone) != int),
+        ]):
+            raise RequestError(400, constants.ERROR_MESSAGES['wrong_type'])
+
+        all_volunteers = []
+        try:
+            for volunteer in volunteers:
+                all_volunteers.append(Volunteer.query.filter(Volunteer.id==volunteer).one())
+            volunteers = all_volunteers
+        except:
+            raise RequestError(400, constants.ERROR_MESSAGES['invalid_list'])
+
+        all_vehicles = []
+        try:
+            for vehicle in vehicles:
+                all_vehicles.append(Vehicle.query.filter(Vehicle.id==vehicle).one())
+            vehicles = all_vehicles
+        except:
+            raise RequestError(400, constants.ERROR_MESSAGES['invalid_list'])
+
+        edited_service = Service(
+            name = name,
+            place = place,
+            date = date,
+            vehicles_num = vehicles_num,
+            volunteers_num = volunteers_num,
+            contact_name = contact_name,
+            contact_phone = contact_phone,
+            vehicles = vehicles,
+            volunteers = volunteers,
+        )
+
+        return jsonify({
+            'success': True,
+            'service': edited_service.fullData()
+            })
+    except RequestError as error:
+        raise RequestError(error.status, error.message)
+    except:
+        abort(422)
+
+@app.route('/services/<int:id>', methods=['DELETE'])
+def delete_service(id):
+    db_data = Service.query.filter(Service.id==id).one_or_none()
+    if db_data is None:
+        raise RequestError(404, constants.ERROR_MESSAGES['ser_not_found'])
+    return ('', 204)
+
+# endregion
+
 
 # region ERRORS HANDLING
 @app.errorhandler(RequestError)

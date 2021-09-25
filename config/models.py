@@ -6,6 +6,16 @@ volunteer_groups = db.Table('volunteer_groups',
     db.Column('group', db.Integer, db.ForeignKey('groups.id'))
     )
 
+services_volunteer = db.Table('services_volunteer',
+    db.Column('volunteer', db.Integer, db.ForeignKey('volunteers.id')),
+    db.Column('service', db.Integer, db.ForeignKey('services.id'))
+    )
+
+services_vehicles = db.Table('services_vehicles',
+    db.Column('vehicle', db.Integer, db.ForeignKey('vehicles.id')),
+    db.Column('service', db.Integer, db.ForeignKey('services.id'))
+    )
+
 class Volunteer(db.Model):
     __tablename__ = 'volunteers'
 
@@ -21,6 +31,7 @@ class Volunteer(db.Model):
     active = db.Column(db.Boolean, nullable=False)
     role = db.Column(db.Integer, db.ForeignKey('roles.id'))
     groups = db.relationship('Group', secondary=volunteer_groups, backref=db.backref('volunteer'))
+    services = db.relationship('Service', secondary=services_volunteer, backref=db.backref('volunteer'))
 
     def __init__(self, name, surnames, birthday, document, address, email, phone1, phone2, active, role,  groups):
         self.name = name
@@ -92,128 +103,137 @@ class Volunteer(db.Model):
         }
 
 class Vehicle(db.Model):
-      __tablename__ = 'vehicles'
+    __tablename__ = 'vehicles'
 
-      id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-      name = db.Column(db.String(30), nullable=False)
-      brand = db.Column(db.String(12), nullable=False)
-      license = db.Column(db.String(7), nullable=False)
-      year = db.Column(db.Integer, nullable=False)
-      next_itv = db.Column(db.Date, nullable=False)
-      incidents = db.Column(db.String(200))
-      active = db.Column(db.Boolean, nullable=False)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(30), nullable=False)
+    brand = db.Column(db.String(12), nullable=False)
+    license = db.Column(db.String(7), nullable=False)
+    year = db.Column(db.Integer, nullable=False)
+    next_itv = db.Column(db.Date, nullable=False)
+    incidents = db.Column(db.String(200))
+    active = db.Column(db.Boolean, nullable=False)
+    services = db.relationship('Service', secondary=services_vehicles, backref=db.backref('vehicle'))
 
-      def __init__(self, name, brand, license, year, next_itv, incidents, active):
-          self.name = name
-          self.brand = brand
-          self.license = license
-          self.year = year
-          self.next_itv = next_itv
-          self.incidents = incidents
-          self.active = active
+    def __init__(self, name, brand, license, year, next_itv, incidents, active):
+        self.name = name
+        self.brand = brand
+        self.license = license
+        self.year = year
+        self.next_itv = next_itv
+        self.incidents = incidents
+        self.active = active
 
-      def insert(self):
-          db.session.add(self)
-          db.session.commit()
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
 
-      def update(self):
-          db.session.commit()
+    def update(self):
+        db.session.commit()
 
-      def delete(self):
-          db.session.delete(self)
-          db.session.commit()
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
 
-      def info(self):
-          return {
-              'name': self.name,
-              'brand': self.brand,
-              'license': self.license,
-              'active': self.active,
-          }
+    def info(self):
+        return {
+            'name': self.name,
+            'brand': self.brand,
+            'license': self.license,
+            'active': self.active,
+        }
 
-      def fullData(self):
-          return {
-              'name': self.name,
-              'brand': self.brand,
-              'license': self.license,
-              'year': self.year,
-              'next_itv': self.next_itv,
-              'incidents': self.incidents,
-              'active': self.active,
-          }
+    def fullData(self):
+        return {
+            'name': self.name,
+            'brand': self.brand,
+            'license': self.license,
+            'year': self.year,
+            'next_itv': self.next_itv,
+            'incidents': self.incidents,
+            'active': self.active,
+        }
 
-  # class Services(db.Model):
-  #   __tablename__ = 'service'
+class Service(db.Model):
+    __tablename__ = 'services'
 
-  #   id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-  #   type = db.Column(db.String(12), nullable=False)
-  #   place = db.Column(db.String(40), nullable=False)
-  #   date = db.Column(db.DateTime, nullable=False)
-  #   vehicles_num = db.Column(db.Integer, nullable=False)
-  #   vehicles = db.relationship("Vehicles", db.ForeignKey('vehicles.id'))
-  #   volunteers_num = db.Column(db.Integer, nullable=False)
-  #   volunteers = db.relationship("Volunteer", db.ForeignKey('volunteer.id'))
-  #   contact_name = db.Column(db.String(12))
-  #   contact_phone = db.Column(db.Integer)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(40), nullable=False)
+    place = db.Column(db.String(40), nullable=False)
+    date = db.Column(db.DateTime, nullable=False)
+    vehicles_num = db.Column(db.Integer, nullable=False)
+    vehicles = db.relationship("Vehicles", db.ForeignKey('vehicles.id'))
+    volunteers_num = db.Column(db.Integer, nullable=False)
+    contact_name = db.Column(db.String(30))
+    contact_phone = db.Column(db.Integer)
+    volunteers = db.relationship('Volunteer', secondary=services_volunteer, backref=db.backref('service_id'))
+    vehicles = db.relationship('Vehicle', secondary=services_vehicles, backref=db.backref('service_id'))
 
-  #   def __init__(self, type, place, date, vehicles_num, vehicles, volunteers_num, volunteers, contact_name, contact_phone):
-  #     self.type = type
-  #     self.place = place
-  #     self.date = date
-  #     self.vehicles_num = vehicles_num
-  #     self.volunteers = volunteers
-  #     self.volunteers_num = volunteers_num
-  #     self.volunteers = volunteers
-  #     self.contact_name = contact_name
-  #     self.contact_phone = contact_phone
+    def __init__(self, name, place, date, vehicles_num, vehicles, volunteers_num, volunteers, contact_name, contact_phone):
+        self.name = name
+        self.place = place
+        self.date = date
+        self.vehicles_num = vehicles_num
+        self.volunteers = volunteers
+        self.vehicles = vehicles
+        self.volunteers_num = volunteers_num
+        self.volunteers = volunteers
+        self.contact_name = contact_name
+        self.contact_phone = contact_phone
 
-  #   def insert(self):
-  #     db.session.add(self)
-  #     db.session.commit()
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
 
-  #   def update(self):
-  #     db.session.commit()
+    def update(self):
+        db.session.commit()
 
-  #   def delete(self):
-  #     db.session.delete(self)
-  #     db.session.commit()
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
 
-  #   def info(self):
-  #     return {
-  #       'type': self.type,
-  #       'place': self.place,
-  #       'date': self.date,
-  #     }
+    def info(self):
+        return {
+            'name': self.name,
+            'place': self.place,
+            'date': self.date,
+        }
 
-  #   def details(self):
-  #     volunteers_list = [{'name': vol['name'], 'surname': vol[surname]} for vol in jsonloads(self.volunteers)]
-  #     vehicles_list = [{'name': veh['name'], 'surname': veh[surname]} for veh in jsonloads(self.vehicles)]
+    def details(self):
+        roles_list = {
+          rol.id: rol.name for rol in Role.query.all()
+        }
+        volunteers_list = [{ 'name': f'{vol.name} {vol.surnames}', 'role': roles_list[vol.role] } for vol in self.volunteers]
+        vehicles_list = [f'{veh.name} {veh.year}' for veh in self.vehicles]
 
-  #     return {
-  #       'type': self.type,
-  #       'place': self.place,
-  #       'date': self.date,
-  #       'vehicles_num': self.vehicles_num,
-  #       'vehicles': vehicles_list,
-  #       'volunteers_num': self.volunteers_num,
-  #       'volunteers': volunteers_list,
-  #     }
+        return {
+            'name': self.name,
+            'place': self.place,
+            'date': self.date,
+            'vehicles_num': self.vehicles_num,
+            'vehicles': vehicles_list,
+            'volunteers_num': self.volunteers_num,
+            'volunteers': volunteers_list,
+        }
 
-  #   def fullData(self):
-  #     volunteers_list = [{'name': vol['name'], 'surname': vol[surname]} for vol in jsonloads(self.volunteers)]
-  #     vehicles_list = [{'name': veh['name'], 'surname': veh[surname]} for veh in jsonloads(self.vehicles)]
+    def fullData(self):
+        roles_list = {
+          rol.id: rol.name for rol in Role.query.all()
+        }
+        volunteers_list = [{ 'name': f'{vol.name} {vol.surnames}', 'role': roles_list[vol.role] } for vol in self.volunteers]
+        vehicles_list = [f'{veh.name} {veh.year}' for veh in self.vehicles]
 
-  #     return {
-  #       'type': self.type,
-  #       'place': self.place,
-  #       'date': self.date,
-  #       'vehicles_num': self.vehicles_num,
-  #       'vehicles': vehicles_list,
-  #       'volunteers_num': self.volunteers_num,
-  #       'volunteers': volunteers_list,
-  #       'contact_name': self.contact_name,
-  #       'contact_phone': self.contact_phone,
-  #     }
+        return {
+            'name': self.name,
+            'place': self.place,
+            'date': self.date,
+            'vehicles_num': self.vehicles_num,
+            'vehicles': vehicles_list,
+            'volunteers_num': self.volunteers_num,
+            'volunteers': volunteers_list,
+            'contact_name': self.contact_name,
+            'contact_phone': self.contact_phone,
+        }
 
 class Group(db.Model):
     __tablename__ = 'groups'

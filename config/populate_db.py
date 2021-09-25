@@ -1,4 +1,4 @@
-from .models import Role, Group, Vehicle, Volunteer
+from .models import Group, Role, Service, Vehicle, Volunteer
 from .setup import db
 
 role_vol = Role(name='Volunteer', volunteers=[])
@@ -101,6 +101,39 @@ def create_dummy_resources():
         role = 1,
         groups = [group_soc, group_edu]
     )
+    service1 = Service(
+        name = 'Preventive service on football match',
+        place = 'Av. de Europa, 15 - Estadio del RFC',
+        date = '2021-12-02, 11:00',
+        vehicles = [ambulance],
+        vehicles_num = 1,
+        contact_name = 'Marcos de la Torre',
+        contact_phone = 12345678,
+        volunteers_num = 2,
+        volunteers = [chief, team_member]
+    )
+    service2 = Service(
+        name = 'Preventive service on trail running',
+        place = 'Club Polideportivo de la Sirena',
+        date = '2022-04-02, 17:30',
+        vehicles = [vir],
+        vehicles_num = 1,
+        contact_name = 'Alesandra Hoobstabank',
+        contact_phone = 12345678,
+        volunteers_num = 3,
+        volunteers = [squad_leader, team_member, manager]
+    )
+    service3 = Service(
+        name = 'Fiestas del pueblo',
+        place = 'Av. del Ayuntamiento, S/N',
+        date = '2021-12-31, 19:00',
+        vehicles = [ambulance, vir],
+        vehicles_num = 2,
+        contact_name = 'Yaiza Blanca',
+        contact_phone = 12345678,
+        volunteers_num = 6,
+        volunteers = [squad_leader]
+    )
 
     db.session.add(vir)
     db.session.add(ambulance)
@@ -108,6 +141,9 @@ def create_dummy_resources():
     db.session.add(squad_leader)
     db.session.add(manager)
     db.session.add(team_member)
+    db.session.add(service1)
+    db.session.add(service2)
+    db.session.add(service3)
     db.session.commit()
 
 def db_drop_and_create_all():
