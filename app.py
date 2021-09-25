@@ -14,7 +14,7 @@ setup_db(app)
 CORS(app)
 
 # --- Uncomment to re/set the db. ALL DATA WILL BE LOST!
-# db_drop_and_create_all()
+db_drop_and_create_all()
 
 # region CUSTOM ERRORS
 class RequestError(Exception):
@@ -40,7 +40,10 @@ def after_request(response):
 
 @app.route('/')
 def ping():
-    return ('', 204)
+    return jsonify({
+        'success': True,
+        'message': "The server is up! :D"
+        })
 
 # region VOLUNTEERS
 @app.route('/volunteers/')
