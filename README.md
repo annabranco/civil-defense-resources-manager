@@ -31,7 +31,6 @@ Define roles
 
 ```env_file
 FLASK_APP=app
-FLASK_ENV=development
 ```
 
 All the other variables need to be changed according to your local configurations.
