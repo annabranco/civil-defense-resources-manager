@@ -149,9 +149,11 @@ def create_dummy_resources():
 def db_drop_and_create_all():
     db.drop_all()
     db.create_all()
-
-    create_default_roles()
-    create_default_groups()
-
-    # Uncomment it for testing
-    create_dummy_resources()
+    # if (Role.query.all())
+    if len(Role.query.all()) == 0:
+        create_default_roles()
+    if len(Group.query.all()) == 0:
+        create_default_groups()
+    if len(Volunteer.query.all()) == 0:
+        # Uncomment it for creating dummy data for testing
+        create_dummy_resources()

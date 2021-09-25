@@ -40,7 +40,10 @@ def after_request(response):
 
 @app.route('/')
 def ping():
-    return ('', 204)
+    return jsonify({
+        'success': True,
+        'message': "The server is up! :D"
+        })
 
 # region VOLUNTEERS
 @app.route('/volunteers/')
