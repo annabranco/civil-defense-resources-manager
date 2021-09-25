@@ -274,7 +274,6 @@ class Role(db.Model):
         groups_list = {
           gr.id: gr.name for gr in Group.query.all()
         }
-        print(groups_list)
         volunteers_list = [{ 'name': f'{vol.name} {vol.surnames}', 'groups': [ groups_list[gr.id] for gr in vol.groups] } for vol in self.volunteers]
         return {
           'name': self.name,

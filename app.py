@@ -4,6 +4,7 @@ from auth.auth import AuthError, requires_auth
 from config.setup import setup_db
 from config.populate_db import db_drop_and_create_all
 from config.models import Volunteer, Role, Group, Vehicle
+from config.config import DATE_FORMAT
 from datetime import datetime
 import os
 import constants
@@ -39,15 +40,7 @@ def after_request(response):
 
 @app.route('/')
 def ping():
-    return 'Healthy'
-
-@app.route('/anna')
-def get_anna():
-    db_anna = Volunteer.query.filter(Volunteer.name=='Anna').one_or_none()
-    print(db_anna)
-    anna = db_anna.info()
-    print(anna)
-    return jsonify({ 'volunteer': anna })
+    return ('', 204)
 
 # region VOLUNTEERS
 @app.route('/volunteers/')
@@ -90,6 +83,23 @@ def create_volunteer():
             raise RequestError(400, constants.ERROR_MESSAGES['missing_data'])
 
         phone2 = body.get('phone2')
+
+        if any([
+            type(name) != str,
+            type(surnames) != str,
+            type(document) != str,
+            type(address) != str,
+            type(email) != str,
+            type(phone1) != int,
+            (phone2 is not None and type(phone2) != int),
+        ]):
+            raise RequestError(400, constants.ERROR_MESSAGES['wrong_type'])
+
+        try:
+            datetime.strptime(birthday, DATE_FORMAT)
+        except:
+            raise RequestError(400, constants.ERROR_MESSAGES['bad_date'])
+
         role = body.get('role')
         if role is None:
             role = 1
@@ -114,7 +124,6 @@ def create_volunteer():
             try:
                 for group in groups:
                     all_groups.append(Group.query.filter(Group.id==group).one())
-                print(f'$$$ all_groups {all_groups}')
                 groups = all_groups
             except:
                 raise RequestError(400, constants.ERROR_MESSAGES['invalid_list'])
@@ -165,10 +174,14 @@ def update_volunteer(id):
             role = body['role']
             groups = body['groups']
             active = body['active']
-            stringified_date_on_body = datetime.strptime(birthday, '%Y-%m-%d').strftime('%Y-%m-%d')
-            stringified_date_on_server = edited_volunteer.birthday.strftime('%Y-%m-%d')
+            stringified_date_on_server = edited_volunteer.birthday.strftime(DATE_FORMAT)
         except:
             raise RequestError(400, constants.ERROR_MESSAGES['missing_data'])
+
+        try:
+            stringified_date_on_body = datetime.strptime(birthday, DATE_FORMAT).strftime(DATE_FORMAT)
+        except:
+            raise RequestError(400, constants.ERROR_MESSAGES['bad_date'])
 
         if all([
             name == edited_volunteer.name,
@@ -184,6 +197,18 @@ def update_volunteer(id):
             'success': False,
             'message': constants.ERROR_MESSAGES['no_change']
             }), 200
+
+        if any([
+            type(name) != str,
+            type(surnames) != str,
+            type(document) != str,
+            type(address) != str,
+            type(email) != str,
+            type(phone1) != int,
+            type(active) != bool,
+            (phone2 is not None and type(phone2) != int),
+        ]):
+            raise RequestError(400, constants.ERROR_MESSAGES['wrong_type'])
 
         try:
             Role.query.filter(Role.id==role).one()
@@ -202,7 +227,6 @@ def update_volunteer(id):
             try:
                 for group in groups:
                     all_groups.append(Group.query.filter(Group.id==group).one())
-                print(f'$$$ all_groups {all_groups}')
                 groups = all_groups
             except:
                 raise RequestError(400, constants.ERROR_MESSAGES['invalid_list'])
@@ -286,11 +310,163 @@ def get_group(id):
 # endregion
 
 # region VEHICLES
+@app.route('/vehicles/')
+@app.route('/vehicles')
+def get_vehicles():
+    db_data = Vehicle.query.all()
+    data = [veh.info() for veh in db_data]
+    return jsonify({
+        'success': True,
+        'vehicles': data
+        })
+
 @app.route('/vehicles/<int:id>')
 def get_vehicle(id):
     db_data = Vehicle.query.filter(Vehicle.id==id).one_or_none()
-    data = db_data.fullData()
-    return jsonify({ 'Vehicle': data })
+    if db_data is None:
+        raise RequestError(404, constants.ERROR_MESSAGES['veh_not_found'])
+
+    data = db_data.info()
+    return jsonify({
+        'success': True,
+        'Vehicle': data
+        })
+
+@app.route('/vehicles', methods=['POST'])
+def create_vehicle():
+    try:
+        body = request.get_json()
+        if body is None:
+            raise RequestError(400, constants.ERROR_MESSAGES['body_needed'])
+        try:
+            name = body['name']
+            brand = body['brand']
+            license_num = body['license']
+            year = body['year']
+            next_itv = body['next_itv']
+        except:
+            raise RequestError(400, constants.ERROR_MESSAGES['missing_data'])
+
+        if any([
+            type(name) != str,
+            type(brand) != str,
+            type(license_num) != str,
+            type(year) != int,
+        ]):
+            raise RequestError(400, constants.ERROR_MESSAGES['wrong_type'])
+
+        try:
+            datetime.strptime(next_itv, DATE_FORMAT)
+        except:
+            raise RequestError(400, constants.ERROR_MESSAGES['bad_date'])
+
+        incidents = body.get('incidents')
+
+        new_vehicle = Vehicle(
+            name = name,
+            brand = brand,
+            license = license_num,
+            year = year,
+            next_itv = next_itv,
+            incidents = incidents,
+            active = True,
+        )
+
+        return jsonify({
+            'success': True,
+            'volunteer': new_vehicle.fullData()
+            }), 201
+
+    except RequestError as error:
+        raise RequestError(error.status, error.message)
+    except:
+        abort(422)
+
+@app.route('/vehicles/<id>', methods=['PATCH'])
+def update_vehicle(id):
+    try:
+        body = request.get_json()
+        if body is None:
+            raise RequestError(400, constants.ERROR_MESSAGES['body_needed'])
+
+        edited_vehicle = Vehicle.query.filter(Vehicle.id==id).one_or_none()
+        if edited_vehicle is None:
+            raise RequestError(404, constants.ERROR_MESSAGES['veh_not_found'])
+
+        try:
+            name = body['name']
+            brand = body['brand']
+            license_num = body['license']
+            year = body['year']
+            next_itv = body['next_itv']
+            incidents = body.get('incidents')
+            active = body['active']
+            stringified_date_on_server = edited_vehicle.next_itv.strftime(DATE_FORMAT)
+        except:
+            raise RequestError(400, constants.ERROR_MESSAGES['missing_data'])
+
+        try:
+            stringified_date_on_body = datetime.strptime(next_itv, DATE_FORMAT).strftime(DATE_FORMAT)
+        except:
+            raise RequestError(400, constants.ERROR_MESSAGES['bad_date'])
+        print('here')
+
+        if all([
+            name == edited_vehicle.name,
+            brand == edited_vehicle.brand,
+            incidents == edited_vehicle.incidents,
+            stringified_date_on_body == stringified_date_on_server,
+            license_num == edited_vehicle.license,
+            year == edited_vehicle.year,
+            active == edited_vehicle.active
+        ]):
+            return jsonify({
+            'success': False,
+            'message': constants.ERROR_MESSAGES['no_change']
+            }), 200
+
+        if any([
+            type(name) != str,
+            type(brand) != str,
+            type(license_num) != str,
+            type(year) != int,
+            type(active) != bool,
+            (incidents is not None and type(incidents) != str),
+
+        ]):
+            raise RequestError(400, constants.ERROR_MESSAGES['wrong_type'])
+        try:
+            datetime.strptime(next_itv, DATE_FORMAT)
+        except:
+            raise RequestError(400, constants.ERROR_MESSAGES['bad_date'])
+
+
+        new_vehicle = Vehicle(
+            name = name,
+            brand = brand,
+            license = license_num,
+            year = year,
+            next_itv = next_itv,
+            incidents = incidents,
+            active = active,
+        )
+
+        return jsonify({
+            'success': True,
+            'volunteer': new_vehicle.fullData()
+            })
+
+    except RequestError as error:
+        raise RequestError(error.status, error.message)
+    except:
+        abort(422)
+
+@app.route('/vehicles/<int:id>', methods=['DELETE'])
+def delete_vehicle(id):
+    db_data = Vehicle.query.filter(Vehicle.id==id).one_or_none()
+    if db_data is None:
+        raise RequestError(404, constants.ERROR_MESSAGES['veh_not_found'])
+    return ('', 204)
 # endregion
 
 # region ERRORS HANDLING
