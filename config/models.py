@@ -2,18 +2,18 @@ from .setup import db
 import json
 
 volunteer_groups = db.Table('volunteer_groups',
-    db.Column('volunteer', db.Integer, db.ForeignKey('volunteers.id')),
-    db.Column('group', db.Integer, db.ForeignKey('groups.id'))
+    db.Column('volunteer', db.Integer, db.ForeignKey('volunteers.id', ondelete="CASCADE")),
+    db.Column('group', db.Integer, db.ForeignKey('groups.id', ondelete="CASCADE"))
     )
 
 services_volunteer = db.Table('services_volunteer',
-    db.Column('volunteer', db.Integer, db.ForeignKey('volunteers.id')),
-    db.Column('service', db.Integer, db.ForeignKey('services.id'))
+    db.Column('volunteer', db.Integer, db.ForeignKey('volunteers.id', ondelete="CASCADE")),
+    db.Column('service', db.Integer, db.ForeignKey('services.id', ondelete="CASCADE"))
     )
 
 services_vehicles = db.Table('services_vehicles',
-    db.Column('vehicle', db.Integer, db.ForeignKey('vehicles.id')),
-    db.Column('service', db.Integer, db.ForeignKey('services.id'))
+    db.Column('vehicle', db.Integer, db.ForeignKey('vehicles.id', ondelete="CASCADE")),
+    db.Column('service', db.Integer, db.ForeignKey('services.id', ondelete="CASCADE"))
     )
 
 class Volunteer(db.Model):
@@ -30,8 +30,8 @@ class Volunteer(db.Model):
     phone2 = db.Column(db.Integer)
     active = db.Column(db.Boolean, nullable=False)
     role = db.Column(db.Integer, db.ForeignKey('roles.id'))
-    groups = db.relationship('Group', secondary=volunteer_groups, backref=db.backref('volunteer'))
-    services = db.relationship('Service', secondary=services_volunteer, backref=db.backref('volunteer'))
+    groups = db.relationship('Group', secondary=volunteer_groups, backref=db.backref('volunteer'), cascade="all, delete", passive_deletes=True)
+    services = db.relationship('Service', secondary=services_volunteer, backref=db.backref('volunteer'), cascade="all, delete", passive_deletes=True)
 
     def __init__(self, name, surnames, birthday, document, address, email, phone1, phone2, active, role,  groups):
         self.name = name
@@ -54,6 +54,8 @@ class Volunteer(db.Model):
        db.session.commit()
 
     def delete(self):
+        print(f'$$$ self {self}')
+
         db.session.delete(self)
         db.session.commit()
 
@@ -62,11 +64,11 @@ class Volunteer(db.Model):
         db_role = Role.query.filter(Role.id==self.role).one_or_none()
         role_name = db_role.name if db_role else 'Volunteer'
         return {
-          'name': self.name,
-          'surnames': self.surnames,
-          'groups': groups_list,
-          'role': role_name,
-          'active': self.active
+            'name': self.name,
+            'surnames': self.surnames,
+            'groups': groups_list,
+            'role': role_name,
+            'active': self.active
         }
 
     def details(self):
@@ -74,6 +76,7 @@ class Volunteer(db.Model):
         db_role = Role.query.filter(Role.id==self.role).one_or_none()
         role_name = db_role.name if db_role else 'Volunteer'
         return {
+            'id': self.id,
             'name': self.name,
             'surnames': self.surnames,
             'groups': groups_list,
@@ -89,6 +92,7 @@ class Volunteer(db.Model):
         db_role = Role.query.filter(Role.id==self.role).one_or_none()
         role_name = db_role.name if db_role else 'Volunteer'
         return {
+            'id': self.id,
             'name': self.name,
             'surnames': self.surnames,
             'groups': groups_list,
@@ -113,7 +117,7 @@ class Vehicle(db.Model):
     next_itv = db.Column(db.Date, nullable=False)
     incidents = db.Column(db.String(200))
     active = db.Column(db.Boolean, nullable=False)
-    services = db.relationship('Service', secondary=services_vehicles, backref=db.backref('vehicle'))
+    services = db.relationship('Service', secondary=services_vehicles, backref=db.backref('vehicle'), cascade="all, delete", passive_deletes=True)
 
     def __init__(self, name, brand, license, year, next_itv, incidents, active):
         self.name = name
@@ -145,6 +149,7 @@ class Vehicle(db.Model):
 
     def fullData(self):
         return {
+            'id': self.id,
             'name': self.name,
             'brand': self.brand,
             'license': self.license,
@@ -166,8 +171,8 @@ class Service(db.Model):
     volunteers_num = db.Column(db.Integer, nullable=False)
     contact_name = db.Column(db.String(30))
     contact_phone = db.Column(db.Integer)
-    volunteers = db.relationship('Volunteer', secondary=services_volunteer, backref=db.backref('service_id'))
-    vehicles = db.relationship('Vehicle', secondary=services_vehicles, backref=db.backref('service_id'))
+    volunteers = db.relationship('Volunteer', secondary=services_volunteer, backref=db.backref('service_id'), cascade="all, delete", passive_deletes=True)
+    vehicles = db.relationship('Vehicle', secondary=services_vehicles, backref=db.backref('service_id'), cascade="all, delete", passive_deletes=True)
 
     def __init__(self, name, place, date, vehicles_num, vehicles, volunteers_num, volunteers, contact_name, contact_phone):
         self.name = name
@@ -207,6 +212,7 @@ class Service(db.Model):
         vehicles_list = [f'{veh.name} {veh.year}' for veh in self.vehicles]
 
         return {
+            'id': self.id,
             'name': self.name,
             'place': self.place,
             'date': self.date,
@@ -224,6 +230,7 @@ class Service(db.Model):
         vehicles_list = [f'{veh.name} {veh.year}' for veh in self.vehicles]
 
         return {
+            'id': self.id,
             'name': self.name,
             'place': self.place,
             'date': self.date,
@@ -263,8 +270,9 @@ class Group(db.Model):
         }
         volunteers_list = [{ 'name': f'{vol.name} {vol.surnames}', 'role': roles_list[vol.role] } for vol in self.volunteers]
         return {
-          'name': self.name,
-          'volunteers': volunteers_list,
+            'id': self.id,
+            'name': self.name,
+            'volunteers': volunteers_list,
         }
 
 
@@ -296,6 +304,7 @@ class Role(db.Model):
         }
         volunteers_list = [{ 'name': f'{vol.name} {vol.surnames}', 'groups': [ groups_list[gr.id] for gr in vol.groups] } for vol in self.volunteers]
         return {
-          'name': self.name,
-          'volunteers': volunteers_list,
+            'id': self.id,
+            'name': self.name,
+            'volunteers': volunteers_list,
         }

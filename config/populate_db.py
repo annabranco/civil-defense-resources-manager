@@ -104,7 +104,7 @@ def create_dummy_resources():
     service1 = Service(
         name = 'Preventive service on football match',
         place = 'Av. de Europa, 15 - Estadio del RFC',
-        date = '2021-12-02, 11:00',
+        date = '2021-08-02, 11:00',
         vehicles = [ambulance],
         vehicles_num = 1,
         contact_name = 'Marcos de la Torre',
