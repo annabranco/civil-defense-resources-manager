@@ -9,6 +9,8 @@ DB_TEST_NAME = 'DB_TEST_NAME'
 DATABASE_URL = 'DATABASE_URL'
 HTTP_RESPONSES = {
     400: 'Bad Request',
+    401: 'Unauthorized',
+    403: 'Forbidden',
     404: 'Not Found',
     405: 'Method not Allowed',
     422: 'Unprocessable Entity',
@@ -30,5 +32,8 @@ ERROR_MESSAGES = {
     'no_change': 'No information was changed on the request.',
     'wrong_type': 'An attribute sent has a wrong type. Please double check all values.',
     'bad_date': 'The date provided is incorrectly formated. Please use [YYYY-MM-DD].',
-    'bad_full_date': 'The date provided is incorrectly formated. Please use [YYYY-MM-DD, hh:mm].'
+    'bad_full_date': 'The date provided is incorrectly formated. Please use [YYYY-MM-DD, hh:mm].',
+    'forbidden_del': 'Sorry, this resource is permanent and cannot be deleted.',
+    'forbidden_upd': 'Sorry, this resource is permanent and cannot be changed.',
+    'forbidden_date_upd': 'This service has already passed and can no longer be changed.'
 }

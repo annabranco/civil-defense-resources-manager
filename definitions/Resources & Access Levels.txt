@@ -2,7 +2,7 @@ ACCESS LEVELS FOR RESOURCES
 ===========================
 
 VOLUNTEERS                        MIN ACCESS LEVEL
-- View full own volunteer data          VOL
+- View full own data                    VOL
 - View limited data of volunteers       MAN
 - View full data of volunteers          ADM
 - Create a volunteer                    ADM
@@ -18,7 +18,7 @@ VEHICLES
 - Delete a vehicle                      ADM
 
 SERVICES
-- View informative services data        !NO
+- View informative services data      [public]
 - View limited services data            VOL
 - View full services data               MAN
 - Apply for a service                   VOL
