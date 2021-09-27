@@ -1,13 +1,15 @@
-from flask import Flask, abort, jsonify, request
+from flask import Flask, abort, jsonify, request, url_for, redirect
 from flask_cors import CORS
-from auth.auth import AuthError, requires_auth
+from auth.auth import AuthError, requires_auth, gets_auth_if_existent, AUTH0_BASE_URL,  AUTH0_CLIENT_ID, AUTH0_SCOPE, AUTH0_CALLBACK_URL, AUTH0_AUDIENCE
 from config.setup import setup_db
 from config.populate_db import db_drop_and_create_all
 from config.models import Group, Role, Service, Vehicle, Volunteer
 from config.config import DATE_FORMAT, FULL_DATE_FORMAT
+from utils.auth import get_user_info
 from datetime import datetime
 import os
 import constants
+from authlib.integrations.flask_client import OAuth
 
 def create_app(test_config=None):
     app = Flask(__name__)
@@ -38,7 +40,6 @@ def create_app(test_config=None):
 
     # --- ROUTES
 
-
     @app.route('/')
     def ping():
         return jsonify({
@@ -46,24 +47,75 @@ def create_app(test_config=None):
             'message': "The server is up! :D"
             })
 
+    @app.route('/login')
+    def login():
+        return redirect(f'{AUTH0_BASE_URL}/authorize?audience={AUTH0_AUDIENCE}&response_type=token&scope=openid%20profile%20email%20picture%20nickname%20user_metadata&client_id={AUTH0_CLIENT_ID}&redirect_uri={AUTH0_CALLBACK_URL}')
+
+    @app.route('/logout')
+    def logout():
+        return redirect(f'{AUTH0_BASE_URL}/v2/logout?client_id={AUTH0_CLIENT_ID}&returnTo={AUTH0_CALLBACK_URL}')
+
+    @app.route('/get-token')
+    @requires_auth('read:volunteers-own')
+    def check_access_volunteer(jwt):
+        print(jwt)
+        return jsonify({
+            'logged_in': True,
+            'persimssions': jwt['permissions']
+            })
+
     # region VOLUNTEERS
     @app.route('/volunteers/')
     @app.route('/volunteers')
-    def get_volunteers():
+    @requires_auth('read:volunteers')
+    def get_volunteers(jwt):
         db_data = Volunteer.query.all()
-        data = [vol.fullData() for vol in db_data]
+        data = [vol.info() for vol in db_data]
         return jsonify({
             'success': True,
             'volunteers': data
             })
 
+    # @app.route('/volunteers/<int:id>', methods=['GET'])
+    # @requires_auth('read:volunteers-own')
+    # def get_volunteer_own_data(jwt, id):
+    #     print(f'$$$ jwt {jwt}')
+
+    #Implement it using ID token directly, without needing to manually request user info from auth0 server
+
+    #     user_id = jwt['sub']
+    #     user_info = get_user_info(user_id)
+    #     print(f'$$$ user_info {user_info}')
+
+    #     try:
+    #         if int(user_info['user_metadata']['volunteerId']) != int(id):
+    #             raise RequestError(403, constants.ERROR_MESSAGES['forbidden_not_own'])
+    #     except:
+    #         raise RequestError(403, constants.AUTH_ERROR_MESSAGES['probably_expired'])
+
+    #     db_data = Volunteer.query.filter(Volunteer.id==id).one_or_none()
+    #     if db_data is None:
+    #         raise RequestError(404, constants.ERROR_MESSAGES['vol_not_found'])
+
+    #     data = db_data.fullData()
+    #     return jsonify({
+    #         'success': True,
+    #         'volunteer': data
+    #         })
+
     @app.route('/volunteers/<int:id>', methods=['GET'])
-    def get_volunteer(id):
+    @requires_auth('read:volunteers-details')
+    def get_volunteer(jwt, id):
+        permissions = jwt.get('permissions') if jwt else []
         db_data = Volunteer.query.filter(Volunteer.id==id).one_or_none()
         if db_data is None:
             raise RequestError(404, constants.ERROR_MESSAGES['vol_not_found'])
 
-        data = db_data.fullData()
+        if 'read:volunteers-full' in permissions:
+            data = db_data.fullData()
+        else:
+            data = db_data.details()
+
         return jsonify({
             'success': True,
             'volunteer': data
@@ -286,6 +338,7 @@ def create_app(test_config=None):
     # region ROLES
     @app.route('/roles/')
     @app.route('/roles')
+    @requires_auth('read:roles')
     def get_roles():
         db_data = Role.query.all()
         data = [rol.info() for rol in db_data]
@@ -295,6 +348,7 @@ def create_app(test_config=None):
             })
 
     @app.route('/roles/<int:id>')
+    @requires_auth('read:roles')
     def get_role(id):
         db_data = Role.query.filter(Role.id==id).one_or_none()
         if db_data is None:
@@ -309,6 +363,7 @@ def create_app(test_config=None):
     # region GROUPS
     @app.route('/groups/')
     @app.route('/groups')
+    @requires_auth('read:groups')
     def get_groups():
         db_data = Group.query.all()
         data = [gr.info() for gr in db_data]
@@ -318,6 +373,7 @@ def create_app(test_config=None):
             })
 
     @app.route('/groups/<int:id>')
+    @requires_auth('read:groups')
     def get_group(id):
         db_data = Group.query.filter(Group.id==id).one_or_none()
         if db_data is None:
@@ -332,6 +388,7 @@ def create_app(test_config=None):
     # region VEHICLES
     @app.route('/vehicles/')
     @app.route('/vehicles')
+    @requires_auth('read:vehicles')
     def get_vehicles():
         db_data = Vehicle.query.all()
         data = [veh.fullData() for veh in db_data]
@@ -341,6 +398,7 @@ def create_app(test_config=None):
             })
 
     @app.route('/vehicles/<int:id>')
+    @requires_auth('read:vehicles')
     def get_vehicle(id):
         db_data = Vehicle.query.filter(Vehicle.id==id).one_or_none()
         if db_data is None:
@@ -499,21 +557,38 @@ def create_app(test_config=None):
     # region SERVICES
     @app.route('/services/')
     @app.route('/services')
-    def get_services():
+    @gets_auth_if_existent()
+    def get_services(jwt):
+        permissions = jwt.get('permissions') if jwt else []
         db_data = Service.query.all()
-        data = [ser.fullData() for ser in db_data]
+
+        if 'read:services-full' in permissions:
+            data = [ser.fullData() for ser in db_data]
+        elif 'read:services-details' in permissions:
+            data = [ser.details() for ser in db_data]
+        else:
+            data = [ser.info() for ser in db_data]
+
         return jsonify({
             'success': True,
             'services': data
             })
 
     @app.route('/services/<int:id>', methods=['GET'])
-    def get_service(id):
+    @gets_auth_if_existent()
+    def get_service(jwt, id):
+        permissions = jwt.get('permissions') if jwt else []
         db_data = Service.query.filter(Service.id==id).one_or_none()
         if db_data is None:
             raise RequestError(404, constants.ERROR_MESSAGES['ser_not_found'])
 
-        data = db_data.details()
+        if 'read:services-full' in permissions:
+            data = db_data.fullData()
+        elif 'read:services-details' in permissions:
+            data = db_data.details()
+        else:
+            data = db_data.info()
+
         return jsonify({
             'success': True,
             'service': data
@@ -585,10 +660,6 @@ def create_app(test_config=None):
             edited_service = Service.query.filter(Service.id==id).one_or_none()
             if edited_service is None:
                 raise RequestError(404, constants.ERROR_MESSAGES['ser_not_found'])
-
-            print(f'$$$ edited_service.date {edited_service.date}')
-            print(f'$$$ datetime.now() {datetime.now()}')
-            print(f'$$$ edited_service.date < datetime.now() {edited_service.date < datetime.now()}')
 
             if edited_service.date < datetime.now():
                 raise RequestError(403, constants.ERROR_MESSAGES['forbidden_date_upd'])
@@ -761,4 +832,5 @@ def create_app(test_config=None):
 app = create_app()
 
 if __name__ == '__main__':
+    app.secret_key = constants.SECRET_KEY
     app.run()

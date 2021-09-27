@@ -1,6 +1,11 @@
 AUTH0_DOMAIN = 'AUTH0_DOMAIN'
-API_AUDIENCE = 'API_AUDIENCE'
+AUTH0_AUDIENCE = 'AUTH0_AUDIENCE'
 ALGORITHMS = 'ALGORITHMS'
+AUTH0_CLIENT_ID = 'AUTH0_CLIENT_ID'
+AUTH0_CALLBACK_URL = 'AUTH0_CALLBACK_URL'
+AUTH0_CLIENT_SECRET = 'AUTH0_CLIENT_SECRET'
+AUTH0_SCOPE = 'AUTH0_SCOPE'
+SECRET_KEY = 'SECRET_KEY'
 DB_HOST = 'DB_HOST'
 DB_USER = 'DB_USER'
 DB_PWD = 'DB_PWD'
@@ -35,5 +40,10 @@ ERROR_MESSAGES = {
     'bad_full_date': 'The date provided is incorrectly formated. Please use [YYYY-MM-DD, hh:mm].',
     'forbidden_del': 'Sorry, this resource is permanent and cannot be deleted.',
     'forbidden_upd': 'Sorry, this resource is permanent and cannot be changed.',
-    'forbidden_date_upd': 'This service has already passed and can no longer be changed.'
+    'forbidden_date_upd': 'This service has already passed and can no longer be changed.',
+    'forbidden_not_own': 'Sorry, you are not authorized to access this data.'
+}
+
+AUTH_ERROR_MESSAGES = {
+    'probably_expired': 'There was a problem with your authentication. Probably your token has expired or it is no longer valid. Please, login again and try to repeat the request.'
 }
