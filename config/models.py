@@ -54,8 +54,6 @@ class Volunteer(db.Model):
        db.session.commit()
 
     def delete(self):
-        print(f'$$$ self {self}')
-
         db.session.delete(self)
         db.session.commit()
 
@@ -111,7 +109,7 @@ class Vehicle(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(30), nullable=False)
-    brand = db.Column(db.String(12), nullable=False)
+    brand = db.Column(db.String(20), nullable=False)
     license = db.Column(db.String(7), nullable=False)
     year = db.Column(db.Integer, nullable=False)
     next_itv = db.Column(db.Date, nullable=False)

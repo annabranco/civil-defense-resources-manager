@@ -51,7 +51,7 @@ def create_dummy_resources():
     )
     chief = Volunteer(
         name = 'Anna',
-        surnames = 'Branco',
+        surnames = 'de Aragón',
         birthday = '2000-06-01',
         document = '12345678-W',
         address = 'Calle de la Suerte, 26',
@@ -63,12 +63,12 @@ def create_dummy_resources():
         groups = [group_ems, group_com, group_soc, group_adm]
     )
     squad_leader = Volunteer(
-        name = 'Debra',
-        surnames = 'Reyes Sternkova',
-        birthday = '1994-08-13',
+        name = 'Cris',
+        surnames = 'Lopez Lopez',
+        birthday = '1983-12-09',
         document = '12345678-W',
-        address = 'Calle de la Vida, 12',
-        email = 'debra@prote.ww',
+        address = 'Calle de la Anunciación, 31',
+        email = 'cris@prote.ww',
         phone1 = 12345678,
         phone2 =  None,
         active = True,
@@ -89,12 +89,12 @@ def create_dummy_resources():
         groups = [group_gen]
     )
     team_member = Volunteer(
-        name = 'Cris',
-        surnames = 'Lopez Lopez',
-        birthday = '1983-12-09',
+        name = 'Debra',
+        surnames = 'Reyes Sternkova',
+        birthday = '1994-08-13',
         document = '12345678-W',
-        address = 'Calle de la Anunciación, 31',
-        email = 'cris@prote.ww',
+        address = 'Calle de la Vida, 12',
+        email = 'debra@prote.ww',
         phone1 = 12345678,
         phone2 =  None,
         active = True,

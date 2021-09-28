@@ -1,10 +1,11 @@
-from flask import Flask, abort, jsonify, request
+from flask import Flask, abort, jsonify, request, url_for, redirect
 from flask_cors import CORS
-from auth.auth import AuthError, requires_auth
+from auth.auth import AuthError, requires_auth, gets_auth_if_existent, AUTH0_BASE_URL,  AUTH0_CLIENT_ID, AUTH0_SCOPE, AUTH0_CALLBACK_URL, AUTH0_AUDIENCE
 from config.setup import setup_db
 from config.populate_db import db_drop_and_create_all
 from config.models import Group, Role, Service, Vehicle, Volunteer
 from config.config import DATE_FORMAT, FULL_DATE_FORMAT
+from utils.auth import get_user_info
 from datetime import datetime
 import os
 import constants
@@ -38,39 +39,92 @@ def create_app(test_config=None):
 
     # --- ROUTES
 
-
     @app.route('/')
-    def ping():
+    @gets_auth_if_existent()
+    def ping(jwt):
+        print(jwt)
         return jsonify({
             'success': True,
             'message': "The server is up! :D"
             })
 
+    @app.route('/login')
+    def login():
+        return redirect(f'{AUTH0_BASE_URL}/authorize?audience={AUTH0_AUDIENCE}&response_type=token&scope=openid%20profile%20email%20picture%20nickname%20user_metadata&client_id={AUTH0_CLIENT_ID}&redirect_uri={AUTH0_CALLBACK_URL}')
+
+    @app.route('/logout')
+    def logout():
+        return redirect(f'{AUTH0_BASE_URL}/v2/logout?client_id={AUTH0_CLIENT_ID}&returnTo={AUTH0_CALLBACK_URL}')
+
+    @app.route('/get-token')
+    @requires_auth('read:volunteers-own')
+    def check_access_volunteer(jwt):
+        print(jwt)
+        return jsonify({
+            'logged_in': True,
+            'persimssions': jwt['permissions']
+            })
+
     # region VOLUNTEERS
     @app.route('/volunteers/')
     @app.route('/volunteers')
-    def get_volunteers():
+    @requires_auth('read:volunteers')
+    def get_volunteers(jwt):
         db_data = Volunteer.query.all()
-        data = [vol.fullData() for vol in db_data]
+        data = [vol.info() for vol in db_data]
         return jsonify({
             'success': True,
             'volunteers': data
             })
 
+    # @app.route('/volunteers/<int:id>', methods=['GET'])
+    # @requires_auth('read:volunteers-own')
+    # def get_volunteer_own_data(jwt, id):
+    #     print(f'$$$ jwt {jwt}')
+
+    #Implement it using ID token directly, without needing to manually request user info from auth0 server
+
+    #     user_id = jwt['sub']
+    #     user_info = get_user_info(user_id)
+    #     print(f'$$$ user_info {user_info}')
+
+    #     try:
+    #         if int(user_info['user_metadata']['volunteerId']) != int(id):
+    #             raise RequestError(403, constants.ERROR_MESSAGES['forbidden_not_own'])
+    #     except:
+    #         raise RequestError(403, constants.AUTH_ERROR_MESSAGES['probably_expired'])
+
+    #     db_data = Volunteer.query.filter(Volunteer.id==id).one_or_none()
+    #     if db_data is None:
+    #         raise RequestError(404, constants.ERROR_MESSAGES['vol_not_found'])
+
+    #     data = db_data.fullData()
+    #     return jsonify({
+    #         'success': True,
+    #         'volunteer': data
+    #         })
+
     @app.route('/volunteers/<int:id>', methods=['GET'])
-    def get_volunteer(id):
+    @requires_auth('read:volunteers-details')
+    def get_volunteer(jwt, id):
+        permissions = jwt.get('permissions') if jwt else []
         db_data = Volunteer.query.filter(Volunteer.id==id).one_or_none()
         if db_data is None:
             raise RequestError(404, constants.ERROR_MESSAGES['vol_not_found'])
 
-        data = db_data.fullData()
+        if 'read:volunteers-full' in permissions:
+            data = db_data.fullData()
+        else:
+            data = db_data.details()
+
         return jsonify({
             'success': True,
             'volunteer': data
             })
 
     @app.route('/volunteers', methods=['POST'])
-    def create_volunteer():
+    @requires_auth('create:volunteers')
+    def create_volunteer(jwt):
         try:
             body = request.get_json()
             if body is None:
@@ -161,7 +215,8 @@ def create_app(test_config=None):
             abort(422)
 
     @app.route('/volunteers/<id>', methods=['PATCH'])
-    def update_volunteer(id):
+    @requires_auth('update:volunteers')
+    def update_volunteer(jwt, id):
         if int(id) <= 3:
             raise RequestError(403, constants.ERROR_MESSAGES['forbidden_upd'])
         try:
@@ -269,15 +324,14 @@ def create_app(test_config=None):
             abort(422)
 
     @app.route('/volunteers/<int:id>', methods=['DELETE'])
-    def delete_volunteer(id):
+    @requires_auth('delete:volunteers')
+    def delete_volunteer(jwt, id):
         if id <= 4:
             raise RequestError(403, constants.ERROR_MESSAGES['forbidden_del'])
         db_data = Volunteer.query.filter(Volunteer.id==id).one_or_none()
 
         if db_data is None:
             raise RequestError(404, constants.ERROR_MESSAGES['vol_not_found'])
-        print(f'$$$ db_data {db_data}')
-
         db_data.delete()
         return ('', 204)
 
@@ -286,7 +340,8 @@ def create_app(test_config=None):
     # region ROLES
     @app.route('/roles/')
     @app.route('/roles')
-    def get_roles():
+    @requires_auth('read:roles')
+    def get_roles(jwt):
         db_data = Role.query.all()
         data = [rol.info() for rol in db_data]
         return jsonify({
@@ -295,7 +350,8 @@ def create_app(test_config=None):
             })
 
     @app.route('/roles/<int:id>')
-    def get_role(id):
+    @requires_auth('read:roles')
+    def get_role(jwt, id):
         db_data = Role.query.filter(Role.id==id).one_or_none()
         if db_data is None:
             raise RequestError(404, constants.ERROR_MESSAGES['rol_not_found'])
@@ -309,7 +365,8 @@ def create_app(test_config=None):
     # region GROUPS
     @app.route('/groups/')
     @app.route('/groups')
-    def get_groups():
+    @requires_auth('read:groups')
+    def get_groups(jwt):
         db_data = Group.query.all()
         data = [gr.info() for gr in db_data]
         return jsonify({
@@ -318,7 +375,8 @@ def create_app(test_config=None):
             })
 
     @app.route('/groups/<int:id>')
-    def get_group(id):
+    @requires_auth('read:groups')
+    def get_group(jwt, id):
         db_data = Group.query.filter(Group.id==id).one_or_none()
         if db_data is None:
             raise RequestError(404, constants.ERROR_MESSAGES['gr_not_found'])
@@ -332,7 +390,8 @@ def create_app(test_config=None):
     # region VEHICLES
     @app.route('/vehicles/')
     @app.route('/vehicles')
-    def get_vehicles():
+    @requires_auth('read:vehicles')
+    def get_vehicles(jwt):
         db_data = Vehicle.query.all()
         data = [veh.fullData() for veh in db_data]
         return jsonify({
@@ -341,7 +400,8 @@ def create_app(test_config=None):
             })
 
     @app.route('/vehicles/<int:id>')
-    def get_vehicle(id):
+    @requires_auth('read:vehicles')
+    def get_vehicle(jwt, id):
         db_data = Vehicle.query.filter(Vehicle.id==id).one_or_none()
         if db_data is None:
             raise RequestError(404, constants.ERROR_MESSAGES['veh_not_found'])
@@ -353,7 +413,8 @@ def create_app(test_config=None):
             })
 
     @app.route('/vehicles', methods=['POST'])
-    def create_vehicle():
+    @requires_auth('create:vehicles')
+    def create_vehicle(jwt):
         try:
             body = request.get_json()
             if body is None:
@@ -405,7 +466,8 @@ def create_app(test_config=None):
             abort(422)
 
     @app.route('/vehicles/<id>', methods=['PATCH'])
-    def update_vehicle(id):
+    @requires_auth('update:vehicles')
+    def update_vehicle(jwt, id):
         if int(id) == 1:
             raise RequestError(403, constants.ERROR_MESSAGES['forbidden_upd'])
         try:
@@ -414,6 +476,7 @@ def create_app(test_config=None):
                 raise RequestError(400, constants.ERROR_MESSAGES['body_needed'])
 
             edited_vehicle = Vehicle.query.filter(Vehicle.id==id).one_or_none()
+
             if edited_vehicle is None:
                 raise RequestError(404, constants.ERROR_MESSAGES['veh_not_found'])
 
@@ -484,7 +547,8 @@ def create_app(test_config=None):
             abort(422)
 
     @app.route('/vehicles/<int:id>', methods=['DELETE'])
-    def delete_vehicle(id):
+    @requires_auth('delete:vehicles')
+    def delete_vehicle(jwt, id):
         if id <= 2:
             raise RequestError(403, constants.ERROR_MESSAGES['forbidden_del'])
         db_data = Vehicle.query.filter(Vehicle.id==id).one_or_none()
@@ -499,28 +563,46 @@ def create_app(test_config=None):
     # region SERVICES
     @app.route('/services/')
     @app.route('/services')
-    def get_services():
+    @gets_auth_if_existent()
+    def get_services(jwt):
+        permissions = jwt.get('permissions') if jwt else []
         db_data = Service.query.all()
-        data = [ser.fullData() for ser in db_data]
+
+        if 'read:services-full' in permissions:
+            data = [ser.fullData() for ser in db_data]
+        elif 'read:services-details' in permissions:
+            data = [ser.details() for ser in db_data]
+        else:
+            data = [ser.info() for ser in db_data]
+
         return jsonify({
             'success': True,
             'services': data
             })
 
     @app.route('/services/<int:id>', methods=['GET'])
-    def get_service(id):
+    @gets_auth_if_existent()
+    def get_service(jwt, id):
+        permissions = jwt.get('permissions') if jwt else []
         db_data = Service.query.filter(Service.id==id).one_or_none()
         if db_data is None:
             raise RequestError(404, constants.ERROR_MESSAGES['ser_not_found'])
 
-        data = db_data.details()
+        if 'read:services-full' in permissions:
+            data = db_data.fullData()
+        elif 'read:services-details' in permissions:
+            data = db_data.details()
+        else:
+            data = db_data.info()
+
         return jsonify({
             'success': True,
             'service': data
             })
 
     @app.route('/services', methods=['POST'])
-    def create_service():
+    @requires_auth('create:services')
+    def create_service(jwt):
         try:
             body = request.get_json()
             if body is None:
@@ -576,7 +658,8 @@ def create_app(test_config=None):
             abort(422)
 
     @app.route('/services/<id>', methods=['PATCH'])
-    def update_service(id):
+    @requires_auth('update:services')
+    def update_service(jwt, id):
         try:
             body = request.get_json()
             if body is None:
@@ -585,10 +668,6 @@ def create_app(test_config=None):
             edited_service = Service.query.filter(Service.id==id).one_or_none()
             if edited_service is None:
                 raise RequestError(404, constants.ERROR_MESSAGES['ser_not_found'])
-
-            print(f'$$$ edited_service.date {edited_service.date}')
-            print(f'$$$ datetime.now() {datetime.now()}')
-            print(f'$$$ edited_service.date < datetime.now() {edited_service.date < datetime.now()}')
 
             if edited_service.date < datetime.now():
                 raise RequestError(403, constants.ERROR_MESSAGES['forbidden_date_upd'])
@@ -676,7 +755,8 @@ def create_app(test_config=None):
             abort(422)
 
     @app.route('/services/<int:id>', methods=['DELETE'])
-    def delete_service(id):
+    @requires_auth('delete:services')
+    def delete_service(jwt, id):
         if int(id) <= 3:
             raise RequestError(403, constants.ERROR_MESSAGES['forbidden_del'])
         db_data = Service.query.filter(Service.id==id).one_or_none()
