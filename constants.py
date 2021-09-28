@@ -1,17 +1,17 @@
-AUTH0_DOMAIN = 'AUTH0_DOMAIN'
-AUTH0_AUDIENCE = 'AUTH0_AUDIENCE'
 ALGORITHMS = 'ALGORITHMS'
-AUTH0_CLIENT_ID = 'AUTH0_CLIENT_ID'
+AUTH0_AUDIENCE = 'AUTH0_AUDIENCE'
 AUTH0_CALLBACK_URL = 'AUTH0_CALLBACK_URL'
+AUTH0_CLIENT_ID = 'AUTH0_CLIENT_ID'
 AUTH0_CLIENT_SECRET = 'AUTH0_CLIENT_SECRET'
-AUTH0_SCOPE = 'AUTH0_SCOPE'
-SECRET_KEY = 'SECRET_KEY'
-DB_HOST = 'DB_HOST'
-DB_USER = 'DB_USER'
-DB_PWD = 'DB_PWD'
-DB_NAME = 'DB_NAME'
-DB_TEST_NAME = 'DB_TEST_NAME'
+AUTH0_DOMAIN = 'AUTH0_DOMAIN'
+AUTH0_LOGOUT_CALLBACK_URL = 'AUTH0_LOGOUT_CALLBACK_URL'
 DATABASE_URL = 'DATABASE_URL'
+DB_HOST = 'DB_HOST'
+DB_NAME = 'DB_NAME'
+DB_PWD = 'DB_PWD'
+DB_TEST_NAME = 'DB_TEST_NAME'
+DB_USER = 'DB_USER'
+
 HTTP_RESPONSES = {
     400: 'Bad Request',
     401: 'Unauthorized',
@@ -20,6 +20,10 @@ HTTP_RESPONSES = {
     405: 'Method not Allowed',
     422: 'Unprocessable Entity',
     500: 'Server Error',
+}
+
+AUTH_ERROR_MESSAGES = {
+    'probably_expired': 'There was a problem with your authentication. Probably your token has expired or it is no longer valid. Please, login again and try to repeat the request.'
 }
 
 ERROR_MESSAGES = {
@@ -44,6 +48,3 @@ ERROR_MESSAGES = {
     'forbidden_not_own': 'Sorry, you are not authorized to access this data.'
 }
 
-AUTH_ERROR_MESSAGES = {
-    'probably_expired': 'There was a problem with your authentication. Probably your token has expired or it is no longer valid. Please, login again and try to repeat the request.'
-}

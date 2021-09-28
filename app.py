@@ -1,6 +1,6 @@
 from flask import Flask, abort, jsonify, request, url_for, redirect
 from flask_cors import CORS
-from auth.auth import AuthError, requires_auth, gets_auth_if_existent, AUTH0_BASE_URL,  AUTH0_CLIENT_ID, AUTH0_SCOPE, AUTH0_CALLBACK_URL, AUTH0_AUDIENCE
+from auth.auth import AuthError, requires_auth, gets_auth_if_existent, AUTH0_AUDIENCE, AUTH0_BASE_URL, AUTH0_CALLBACK_URL, AUTH0_CLIENT_ID, AUTH0_LOGOUT_CALLBACK_URL
 from config.setup import setup_db
 from config.populate_db import db_drop_and_create_all
 from config.models import Group, Role, Service, Vehicle, Volunteer
@@ -54,7 +54,7 @@ def create_app(test_config=None):
 
     @app.route('/logout')
     def logout():
-        return redirect(f'{AUTH0_BASE_URL}/v2/logout?client_id={AUTH0_CLIENT_ID}&returnTo={AUTH0_CALLBACK_URL}')
+        return redirect(f'{AUTH0_BASE_URL}/v2/logout?client_id={AUTH0_CLIENT_ID}&returnTo={AUTH0_LOGOUT_CALLBACK_URL}')
 
     @app.route('/get-token')
     @requires_auth('read:volunteers-own')

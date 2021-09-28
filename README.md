@@ -246,6 +246,8 @@ For example, if you got an *admin* Access Token, you should set `ACCESS_LEVEL` t
 To run the tests, you just need to click on Run and confirm. There are two ways of doing it, as you can see below:
 ![Screenshot of how to start running the tests on Postman](https://github.com/annabranco/civil-defense-resources-manager/raw/develop/assets/postman2.png)
 
+If you want, you can also use Postman to test your local deployment. You just need to change the Collection Variable `HOST` from `https://prote-civ.herokuapp.com/` to `localhost:5000`.
+
 ### Testing locally
 
 Testing locally is a little bit harder, as you need to set your own Auth0 API to do it. But if you want to do it, for testing or evaluation, that's great! You just need to setup the environment keys.
