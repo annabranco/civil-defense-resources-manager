@@ -27,7 +27,6 @@ class AuthError(Exception):
         self.status_code = status_code
 
     def to_json(self):
-        print(self)
         return {
             'error': True,
             'status': self.status_code,
