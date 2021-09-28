@@ -795,8 +795,8 @@ def create_app(test_config=None):
         return jsonify({
         'success': False,
         'error_code': 400,
-        'error': 'Bad Request',
-        'message': 'Your request is incorrect and cannot be processed. Please double check it.'
+        'error': constants.HTTP_RESPONSES[400],
+        'message': constants.ERROR_MESSAGES['bad_request']
         }), 400
 
     @app.errorhandler(404)
@@ -804,8 +804,8 @@ def create_app(test_config=None):
         return jsonify({
         'success': False,
         'error_code': 404,
-        'error': 'Not Found',
-        'message': 'Resource not found on database.'
+        'error': constants.HTTP_RESPONSES[404],
+        'message': constants.ERROR_MESSAGES['not_found']
         }), 404
 
     @app.errorhandler(405)
@@ -813,8 +813,8 @@ def create_app(test_config=None):
         return jsonify({
         'success': False,
         'error_code': 405,
-        'error': 'Method not Allowed',
-        'message': 'Are you handling the correct endpoint?'
+        'error': constants.HTTP_RESPONSES[405],
+        'message': constants.ERROR_MESSAGES['not_allowed']
         }), 405
 
     @app.errorhandler(422)
@@ -822,8 +822,8 @@ def create_app(test_config=None):
         return jsonify({
         'success': False,
         'error_code': 422,
-        'error': 'Unprocessable Entity',
-        'message': 'Your request could not be processed. Are you sure your request is correct?'
+        'error': constants.HTTP_RESPONSES[422],
+        'message': constants.ERROR_MESSAGES['unprocessable']
         }), 422
 
     @app.errorhandler(500)
@@ -831,8 +831,8 @@ def create_app(test_config=None):
         return jsonify({
         'success': False,
         'error_code': 500,
-        'error': 'Server Error',
-        'message': 'That\'s very embarassing, but something has failed on the backend... :('
+        'error': constants.HTTP_RESPONSES[500],
+        'message': constants.ERROR_MESSAGES['server_error']
         }), 500
     # endregion
 

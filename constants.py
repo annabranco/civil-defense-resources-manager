@@ -23,7 +23,18 @@ HTTP_RESPONSES = {
 }
 
 AUTH_ERROR_MESSAGES = {
-    'probably_expired': 'There was a problem with your authentication. Probably your token has expired or it is no longer valid. Please, login again and try to repeat the request.'
+    'probably_expired': 'There was a problem with your authentication. Probably your token has expired or it is no longer valid. Please, login again and try to repeat the request.',
+    'authorization_header_missing': 'Authorization header is expected.',
+    'no_bearer': 'Authorization header must start with "Bearer".',
+    'token_not_found': 'Token not found.',
+    'no_bearer_token': 'Authorization header must be bearer token.',
+    'auth_malformed': 'Authorization malformed.',
+    'token_expired': 'Token expired.',
+    'invalid_claims': 'Incorrect claims. Please, check the audience and issuer.',
+    'parsing_failed': 'Unable to parse authentication token.',
+    'key_not_found': 'Unable to find the appropriate key.',
+    'permissions_failed': 'Unable to check permissions.',
+    'no_permission': 'User has no permission to access the requested content.'
 }
 
 ERROR_MESSAGES = {
@@ -45,6 +56,11 @@ ERROR_MESSAGES = {
     'forbidden_del': 'Sorry, this resource is permanent and cannot be deleted.',
     'forbidden_upd': 'Sorry, this resource is permanent and cannot be changed.',
     'forbidden_date_upd': 'This service has already passed and can no longer be changed.',
-    'forbidden_not_own': 'Sorry, you are not authorized to access this data.'
+    'forbidden_not_own': 'Sorry, you are not authorized to access this data.',
+    'not_found': 'Resource not found on database.',
+    'not_allowed': 'Are you handling the correct endpoint?',
+    'bad_request': 'Your request is incorrect and cannot be processed. Please double check it.',
+    'unprocessable': 'Your request could not be processed. Are you sure your request is correct?',
+    'server_error': 'That\'s very embarassing, but something has failed on the backend... :('
 }
 
