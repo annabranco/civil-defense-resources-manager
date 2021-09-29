@@ -1,0 +1,151 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.header__wrapper {
+    border: 1px solid #FE7F07;
+    background: #ffcfa4;
+}
+
+.header__wrapper--inner {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 50%;
+    margin: 25px auto;
+}
+
+.header__logo {
+    width: 10%;
+}
+
+.header__title--wrapper {
+    font-family: 'Roboto', sans-serif;
+    color: #155BAD;
+}
+
+.header__title--main {
+    margin: 0;
+    padding: 0;
+    font-size: 2.1rem;
+    font-weight: 900;
+      /* -webkit-text-stroke: 1px white; */
+    /* font-family: 'Yaldevi', sans-serif; */
+}
+
+.header__title--sub {
+    margin: 0 40px 0 0;
+    padding: 0;
+    font-size: 0.8rem;
+    text-align: right;
+    /* font-family: 'Yaldevi', sans-serif; */
+}
+
+.main__wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 100px auto;
+}
+
+.main__text {
+    font-family: 'Yaldevi', sans-serif;
+    font-size: 1.2rem;
+    margin-top: -10px;
+}
+
+.main__textarea {
+  margin: 30px auto;
+  padding: 20px;
+  height: 190px;
+  width: 60%;
+  resize: none;
+  }
+
+.main__button {
+    border: 1px solid black;
+    border-radius: 5px;
+    margin: 80px auto 0;
+    background-image: linear-gradient(
+        rgba(255, 255, 255, 0.2),
+        rgba(21, 91, 173, 0.6)
+    );
+    width: 120px;
+    padding: 10px 50px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 700;
+    text-decoration: none;
+    font-size: 1.2rem;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.4),
+      inset 0 1px 5px 1px rgba(255, 255, 255, 0.7);
+}
+
+.main__button:hover {
+    transform: translate(0, 1px);
+    text-decoration: none;
+    box-shadow: inset 0 2px 5px 1px rgba(0, 0, 0, 0.4);
+    background-image: linear-gradient(
+        rgba(255, 255, 255, 0.2),
+        rgba(254, 127, 7, 0.7)
+    );
+}
+
+.main__button--copy {
+    border: 1px solid black;
+    border-radius: 5px;
+    margin: 20px auto 0;
+    background-image: linear-gradient(
+        rgba(255, 255, 255, 0.2),
+        rgba(21, 91, 173, 0.6)
+    );
+    width: 200px;
+    padding: 10px;
+    font-family: 'Roboto', sans-serif;
+    text-decoration: none;
+    font-size: 0.9rem;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.4),
+      inset 0 1px 5px 1px rgba(255, 255, 255, 0.7);
+}
+
+.main__button--copy:hover {
+    transform: translate(0, 1px);
+    text-decoration: none;
+    font-weight: 700;
+    box-shadow: inset 0 2px 5px 1px rgba(0, 0, 0, 0.4);
+    background-image: linear-gradient(
+        rgba(255, 255, 255, 0.2),
+        rgba(254, 127, 7, 0.7)
+    );
+}
+
+.copied {
+  cursor: not-allowed;
+  background: limegreen;
+}
+
+.copied:hover {
+  background: limegreen;
+}
+
+.main__access-level {
+  margin: -70px auto 40px;
+  padding: 10px;
+  width: 70%;
+  border-radius: 5px;
+  background: rgba(21, 91, 173, 0.3);
+  font-family: 'Roboto', sans-serif;
+  color: white;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+      font-weight: 300;
+
+
+}

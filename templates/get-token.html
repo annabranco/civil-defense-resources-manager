@@ -1,0 +1,42 @@
+<!doctype html>
+  <head>
+    <meta charset="utf-8">
+    <title>{% block title %}{% endblock %}</title>
+
+    <!-- meta -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <!-- /meta -->
+
+    <!-- styles -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Yaldevi:wght@300;400&display=swap" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="/static/styles/styles.css" />
+    <!-- /styles -->
+
+    <!-- favicons -->
+    <link rel="shortcut icon" href="/static/icons/favicon.png">
+    <!-- /favicons -->
+
+    <!-- scripts -->
+    <script type="text/javascript" src="/static/scripts/script.js" defer></script>
+    <!-- /scripts -->
+  </head>
+  <body>
+      <header class="header__wrapper">
+        <div class="header__wrapper--inner">
+          <img class="header__logo" src="{{ url_for('static',filename='icons/prote-civ-logo.png') }}" alt="Logo of Protección Civil" />
+          <div class="header__title--wrapper">
+            <h1 class="header__title--main">CIVIL DEFENSE RESOURCES MANAGER</h1>
+            <p class="header__title--sub">(beta version)</p>
+          </div>
+        </div>
+      </header>
+
+        <main class="main__wrapper">
+        </main>
+
+  </body>
+</html>

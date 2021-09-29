@@ -1,4 +1,4 @@
-from flask import Flask, abort, jsonify, request, url_for, redirect
+from flask import Flask, abort, jsonify, request, url_for, redirect, render_template
 from flask_cors import CORS
 from auth.auth import AuthError, requires_auth, gets_auth_if_existent, AUTH0_AUDIENCE, AUTH0_BASE_URL, AUTH0_CALLBACK_URL, AUTH0_CLIENT_ID, AUTH0_LOGOUT_CALLBACK_URL
 from config.setup import setup_db
@@ -57,13 +57,8 @@ def create_app(test_config=None):
         return redirect(f'{AUTH0_BASE_URL}/v2/logout?client_id={AUTH0_CLIENT_ID}&returnTo={AUTH0_LOGOUT_CALLBACK_URL}')
 
     @app.route('/get-token')
-    @requires_auth('read:volunteers-own')
-    def check_access_volunteer(jwt):
-        print(jwt)
-        return jsonify({
-            'logged_in': True,
-            'persimssions': jwt['permissions']
-            })
+    def check_access_volunteer():
+        return render_template('get-token.html', level='volunteer')
 
     # region VOLUNTEERS
     @app.route('/volunteers/')
