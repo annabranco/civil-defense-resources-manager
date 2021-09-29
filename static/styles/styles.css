@@ -93,7 +93,7 @@ body {
 }
 
 .copied {
-    cursor: not-allowed;
+    cursor: wait;
     background: limegreen;
 }
 
