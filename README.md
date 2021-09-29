@@ -1,6 +1,6 @@
 # CIVIL DEFENSE RESOURCES MANAGER (beta version)
 
-<img alt="Screenshot of how to change variables on Postman" src="https://github.com/annabranco/civil-defense-resources-manager/raw/develop/assets/prote-civ-logo.png" width="20%">
+<img alt="Screenshot of how to change variables on Postman" src="https://github.com/annabranco/civil-defense-resources-manager/raw/develop/static/icons/prote-civ-logo.png" width="20%">
 
 ## Why did I build this project?
 
@@ -241,10 +241,10 @@ For example, if you got an *admin* Access Token, you should set `ACCESS_LEVEL` t
 
 **IMPORTANT**: Failing to change accordingly the `ACCESS_LEVEL` will cause the tests to fail, as the Collection will not run the proper expectations related to the token provided. If your tests are failing, please check if you set correctly the `ACCESS_LEVEL` and the full content of `ACCESS_TOKEN` without any spaces or line breaks.
 
-![Screenshot of how to change variables on Postman](https://github.com/annabranco/civil-defense-resources-manager/raw/develop/assets/postman1.png)
+![Screenshot of how to change variables on Postman](https://github.com/annabranco/civil-defense-resources-manager/raw/develop/static/images/postman1.png)
 
 To run the tests, you just need to click on Run and confirm. There are two ways of doing it, as you can see below:
-![Screenshot of how to start running the tests on Postman](https://github.com/annabranco/civil-defense-resources-manager/raw/develop/assets/postman2.png)
+![Screenshot of how to start running the tests on Postman](https://github.com/annabranco/civil-defense-resources-manager/raw/develop/static/images/postman2.png)
 
 If you want, you can also use Postman to test your local deployment. You just need to change the Collection Variable `HOST` from `https://prote-civ.herokuapp.com/` to `localhost:5000`.
 
@@ -318,11 +318,15 @@ If you are testing on the running server, you need to use one existent user. The
 
 If you want to test them, please send me a DM so I can give you the credentials.
 
+After the successful login, you will be redirected to a page where you will get your Access Token. Copy it to use it on your requests.
+
+### Changing user
+
 To change the user and get another Access Token, you need first logout from the current user:
 `https://localhost:5000/logout`
 `https://prote-civ.herokuapp.com/logout`
 
-And then, login again with another user.
+And then, just login again with another user.
 
 ## Future development
 

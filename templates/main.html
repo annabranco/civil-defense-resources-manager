@@ -1,0 +1,108 @@
+<!doctype html>
+  <head>
+    <meta charset="utf-8">
+    <title>CIVIL DEFENSE RESOURCES MANAGER</title>
+
+    <!-- meta -->
+    <meta name="description" content="Civil Defense Resources Manager (beta version)">
+    <meta name="author" content="Anna Branco">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <!-- /meta -->
+
+    <!-- styles -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Yaldevi:wght@300;400&display=swap" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="/static/styles/styles.css" />
+    <!-- /styles -->
+
+    <!-- favicons -->
+    <link rel="shortcut icon" href="/static/icons/prote-civ-logo.png">
+    <!-- /favicons -->
+  </head>
+  <body>
+      <header class="header__wrapper">
+        <div class="header__wrapper--inner">
+          <img class="header__logo" src="{{ url_for('static',filename='icons/prote-civ-logo.png') }}" alt="Logo of Protección Civil" />
+          <div class="header__title--wrapper">
+            <h1 class="header__title--main">CIVIL DEFENSE RESOURCES MANAGER</h1>
+            <p class="header__title--sub">(beta version)</p>
+          </div>
+        </div>
+      </header>
+
+      <main class="main__wrapper {{ access_token }}">
+          <a class="main__button main___button--initial" href="/login">Log in to get your Access Token</a>
+          <table class="main__table">
+            <caption>Endpoints</caption>
+            <tr>
+              <th class="main__table--header" scope="col"> ACTION </th>
+              <th class="main__table--header" scope="col"> ENDPOINT </th>
+              <th class="main__table--header" scope="col"> METHOD </th>
+              <th class="main__table--header" scope="col"> MIN. ACCESS LEVEL </th>
+              <th class="main__table--header" scope="col"> ADDITIONAL BODY </th>
+            </tr>
+            <tr>
+              <td> View all volunteers </td><td> /volunteers </td><td> GET </td><td> volunteer </td><td></td>
+            </tr>
+            <tr>
+              <td> View one volunteer </td><td> /volunteers/[id] </td><td> GET </td><td> manager </td><td></td>
+            </tr>
+            <tr>
+              <td> Create a volunteer </td><td> /volunteers </td><td> POST </td><td>  manager </td><td> Volunteer obj.</td>
+            </tr>
+            <tr>
+              <td> Update a volunteer </td><td> /volunteers/[id] </td><td> PATCH </td><td> manager </td><td> Volunteer obj.</td>
+            </tr>
+            <tr>
+              <td> Delete a volunteer </td><td> /volunteers/[id] </td><td> DELETE </td><td> admin </td><td></td>
+            </tr>
+            <tr>
+              <td> View all vehicles </td><td> /vehicles </td><td> GET </td><td>  manager </td><td></td>
+            </tr>
+            <tr>
+              <td> View one vehicleo </td><td> /vehicles/[id] </td><td> GET </td><td>  manager </td><td></td>
+            </tr>
+            <tr>
+              <td> Create a vehicle </td><td> /vehicles </td><td> POST </td><td> admin </td><td> Vehicle obj.</td>
+            </tr>
+            <tr>
+              <td> Update a vehicle </td><td> /vehicles/[id] </td><td> PATCH </td><td> manager </td><td> Vehicle obj.</td>
+            </tr>
+            <tr>
+              <td> Delete a vehicle </td><td> /vehicles/[id] </td><td> DELETE </td><td> admin </td><td></td>
+            </tr>
+            <tr>
+              <td> View all groups </td><td> /groups </td><td> GET </td><td> volunteer </td><td></td>
+            </tr>
+            <tr>
+              <td> View one group </td><td> /groups/[id] </td><td> GET </td><td> volunteer </td><td></td>
+            </tr>
+            <tr>
+              <td> View all roles </td><td> /roles </td><td> GET </td><td>  volunteer </td><td></td>
+            </tr>
+            <tr>
+              <td> View one role </td><td> /roles/[id] </td><td> GET </td><td>  volunteer </td><td></td>
+            </tr>
+            <tr>
+              <td> View all services </td><td> /services </td><td> GET </td><td>  public </td><td></td>
+            </tr>
+            <tr>
+              <td> View one service </td><td> /services/[id] </td><td> GET </td><td> volunteer </td><td></td>
+            </tr>
+            <tr>
+              <td> Create a service </td><td> /services </td><td> POST </td><td>  manager </td><td> Service obj.</td>
+            </tr>
+            <tr>
+              <td> Update a service </td><td> /services/[id] </td><td> PATCH </td><td> manager </td><td> Service obj.</td>
+            </tr>
+            <tr>
+              <td> Delete a service </td><td> /services/[id] </td><td> DELETE </td><td>  admin </td><td></td>
+            </tr>
+          </table>
+          <p class="main__text simple">
+          See details of the objects needed to be sent to the endpoints on the <a href="https://github.com/annabranco/civil-defense-resources-manager">project repo</a>.
+          </p>
+      </main>
+  </body>
+</html>
