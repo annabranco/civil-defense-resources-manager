@@ -4491,68 +4491,6 @@
 							"response": []
 						},
 						{
-							"name": "[services] update with permanent id",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"if ((pm.variables.get(\"ACCESS_LEVEL\") === 'admin' || pm.variables.get(\"ACCESS_LEVEL\") === 'manager') && pm.variables.get(\"ACCESS_TOKEN\")) {\r",
-											"    pm.test(\"Status code is 403\", function () {\r",
-											"        pm.response.to.have.status(403);\r",
-											"    });\r",
-											"\r",
-											"    pm.test(\"Returns a correct error message\", function () {\r",
-											"        var jsonData = pm.response.json();\r",
-											"        pm.expect(jsonData.success).to.equal(false)\r",
-											"        pm.expect(jsonData.error).to.equal(\"Forbidden\")\r",
-											"        pm.expect(jsonData.error_code).to.equal(403)\r",
-											"        pm.expect(jsonData.message).to.equal(\"This service has already passed and can no longer be changed.\")\r",
-											"    });\r",
-											"} else if ((pm.variables.get(\"ACCESS_LEVEL\") === 'volunteer') && pm.variables.get(\"ACCESS_TOKEN\")) {\r",
-											"    pm.test(\"Status code is 403\", function () {\r",
-											"        var jsonData = pm.response.json();\r",
-											"        pm.response.to.have.status(403);\r",
-											"        pm.expect(jsonData.error).to.equal(\"Forbidden\")\r",
-											"    });\r",
-											"} else {\r",
-											"    pm.test(\"Status code is 401\", function () {\r",
-											"        var jsonData = pm.response.json();\r",
-											"        pm.response.to.have.status(401);\r",
-											"        pm.expect(jsonData.error).to.equal(\"Unauthorized\")\r",
-											"    });\r",
-											"}"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "PATCH",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"name\": \"Lara\",\r\n    \"surnames\": \"Croft\",\r\n    \"birthday\": \"1994-07-21\",\r\n    \"document\": \"1234567Q\",\r\n    \"address\": \"Baskerville St. 221b\",\r\n    \"email\": \"lara@prote.ww\",\r\n    \"phone1\": 12345678,\r\n    \"role\": 1,\r\n    \"groups\": [1,2,3,4],\r\n    \"active\": false\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{HOST}}/services/1",
-									"host": [
-										"{{HOST}}"
-									],
-									"path": [
-										"services",
-										"1"
-									]
-								}
-							},
-							"response": []
-						},
-						{
 							"name": "[services] update with no body",
 							"event": [
 								{
@@ -4914,6 +4852,68 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "[services] update with permanent id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if ((pm.variables.get(\"ACCESS_LEVEL\") === 'admin' || pm.variables.get(\"ACCESS_LEVEL\") === 'manager') && pm.variables.get(\"ACCESS_TOKEN\")) {\r",
+											"    pm.test(\"Status code is 403\", function () {\r",
+											"        pm.response.to.have.status(403);\r",
+											"    });\r",
+											"\r",
+											"    pm.test(\"Returns a correct error message\", function () {\r",
+											"        var jsonData = pm.response.json();\r",
+											"        pm.expect(jsonData.success).to.equal(false)\r",
+											"        pm.expect(jsonData.error).to.equal(\"Forbidden\")\r",
+											"        pm.expect(jsonData.error_code).to.equal(403)\r",
+											"        pm.expect(jsonData.message).to.equal(\"This service has already passed and can no longer be changed.\")\r",
+											"    });\r",
+											"} else if ((pm.variables.get(\"ACCESS_LEVEL\") === 'volunteer') && pm.variables.get(\"ACCESS_TOKEN\")) {\r",
+											"    pm.test(\"Status code is 403\", function () {\r",
+											"        var jsonData = pm.response.json();\r",
+											"        pm.response.to.have.status(403);\r",
+											"        pm.expect(jsonData.error).to.equal(\"Forbidden\")\r",
+											"    });\r",
+											"} else {\r",
+											"    pm.test(\"Status code is 401\", function () {\r",
+											"        var jsonData = pm.response.json();\r",
+											"        pm.response.to.have.status(401);\r",
+											"        pm.expect(jsonData.error).to.equal(\"Unauthorized\")\r",
+											"    });\r",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Lara\",\r\n    \"surnames\": \"Croft\",\r\n    \"birthday\": \"1994-07-21\",\r\n    \"document\": \"1234567Q\",\r\n    \"address\": \"Baskerville St. 221b\",\r\n    \"email\": \"lara@prote.ww\",\r\n    \"phone1\": 12345678,\r\n    \"role\": 1,\r\n    \"groups\": [1,2,3,4],\r\n    \"active\": false\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{HOST}}/services/1",
+									"host": [
+										"{{HOST}}"
+									],
+									"path": [
+										"services",
+										"1"
+									]
+								}
+							},
+							"response": []
 						}
 					]
 				},
@@ -5114,42 +5114,6 @@
 					]
 				}
 			]
-		},
-		{
-			"name": "ping",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 200\", function () {\r",
-							"    pm.response.to.have.status(200);\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Returns the expect data for the id sent\", function () {\r",
-							"    var jsonData = pm.response.json();\r",
-							"    pm.expect(jsonData.success).to.equal(true)\r",
-							"    pm.expect(jsonData.message).to.equal('The server is up! :D')\r",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{HOST}}/",
-					"host": [
-						"{{HOST}}"
-					],
-					"path": [
-						""
-					]
-				}
-			},
-			"response": []
 		}
 	],
 	"auth": {
@@ -5185,21 +5149,20 @@
 	"variable": [
 		{
 			"key": "HOST",
-			"value": "localhost:5000"
-		},
-		{
-			"key": "HOST",
-			"value": "https://prote-civ.herokuapp.com/",
-			"disabled": true
+			"value": "https://prote-civ.herokuapp.com/"
 		},
 		{
 			"key": "ACCESS_TOKEN",
-			"value": "",
-			"disabled": true
+			"value": ""
 		},
 		{
 			"key": "ACCESS_LEVEL",
 			"value": "public"
+		},
+		{
+			"key": "HOST",
+			"value": "localhost:5000",
+			"disabled": true
 		}
 	]
 }
