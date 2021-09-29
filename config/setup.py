@@ -16,6 +16,8 @@ DB_NAME = env.get('DB_NAME', 'postgres')
 DB_TEST_NAME = env.get('DB_TEST_NAME', 'postgres')
 DATABASE_URL = env.get('DATABASE_URL')
 DATABASE_URL_FOR_TESTING = env.get('DATABASE_URL_FOR_TESTING')
+TESTING_ACCESS_TOKEN = env.get('TESTING_ACCESS_TOKEN')
+TESTING_ACCESS_LEVEL = env.get('TESTING_ACCESS_LEVEL')
 
 database_path = DATABASE_URL or f'postgresql+psycopg2://{DB_USER}:{DB_PWD}@{DB_HOST}/{DB_NAME}'
 

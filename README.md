@@ -271,14 +271,12 @@ and run it with
 
 It will build and hydrate a secondary database for testing.
 
-Stop the application, and on `.env` change back DB_NAME for your original database. Keep `DB_TEST_NAME` with the name of your testing DB.
-
 You can run the tests using
 
 `$ pytest`
 
 For the moment, the local tests are very simplified versions of the tests that you can run on Postman.
-For running them correctly, you can change your set on your `.env` file:
+For running the tests for all user accesses, you can change your access settings on `.env` file:
 
 ```env_file
 TESTING_ACCESS_TOKEN = <access token received from the /login>
@@ -291,8 +289,9 @@ If you want to run your local tests against the real API, you can also do it by 
 DATABASE_URL_FOR_TESTING=https://prote-civ.herokuapp.com
 ```
 
-Just remember to use the Access Token from `https://prote-civ.herokuapp.com` (see how to get the Access Token below).
+Just remember, in this case, to use the Access Token from `https://prote-civ.herokuapp.com` (see how to get the Access Token below).
 
+After the tests, don't forget to comment again `# db_drop_and_create_all()` and change back DB_NAME for your original database.
 
 <a id="access-token"></a>
 
