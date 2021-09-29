@@ -42,11 +42,8 @@ def create_app(test_config=None):
     @app.route('/')
     @gets_auth_if_existent()
     def ping(jwt):
-        print(jwt)
-        return jsonify({
-            'success': True,
-            'message': "The server is up! :D"
-            })
+        return render_template('main.html', access_token=jwt)
+
 
     @app.route('/login')
     def login():
@@ -58,7 +55,7 @@ def create_app(test_config=None):
 
     @app.route('/get-token')
     def check_access_volunteer():
-        return render_template('get-token.html', level='volunteer')
+        return render_template('get-token.html')
 
     # region VOLUNTEERS
     @app.route('/volunteers/')

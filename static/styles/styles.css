@@ -31,8 +31,6 @@ body {
     padding: 0;
     font-size: 2.1rem;
     font-weight: 900;
-      /* -webkit-text-stroke: 1px white; */
-    /* font-family: 'Yaldevi', sans-serif; */
 }
 
 .header__title--sub {
@@ -40,7 +38,6 @@ body {
     padding: 0;
     font-size: 0.8rem;
     text-align: right;
-    /* font-family: 'Yaldevi', sans-serif; */
 }
 
 .main__wrapper {
@@ -68,36 +65,6 @@ body {
 .main__button {
     border: 1px solid black;
     border-radius: 5px;
-    margin: 80px auto 0;
-    background-image: linear-gradient(
-        rgba(255, 255, 255, 0.2),
-        rgba(21, 91, 173, 0.6)
-    );
-    width: 120px;
-    padding: 10px 50px;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 700;
-    text-decoration: none;
-    font-size: 1.2rem;
-    text-align: center;
-    cursor: pointer;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.4),
-      inset 0 1px 5px 1px rgba(255, 255, 255, 0.7);
-}
-
-.main__button:hover {
-    transform: translate(0, 1px);
-    text-decoration: none;
-    box-shadow: inset 0 2px 5px 1px rgba(0, 0, 0, 0.4);
-    background-image: linear-gradient(
-        rgba(255, 255, 255, 0.2),
-        rgba(254, 127, 7, 0.7)
-    );
-}
-
-.main__button--copy {
-    border: 1px solid black;
-    border-radius: 5px;
     margin: 20px auto 0;
     background-image: linear-gradient(
         rgba(255, 255, 255, 0.2),
@@ -114,7 +81,7 @@ body {
       inset 0 1px 5px 1px rgba(255, 255, 255, 0.7);
 }
 
-.main__button--copy:hover {
+.main__button:hover {
     transform: translate(0, 1px);
     text-decoration: none;
     font-weight: 700;
@@ -126,26 +93,57 @@ body {
 }
 
 .copied {
-  cursor: not-allowed;
-  background: limegreen;
+    cursor: not-allowed;
+    background: limegreen;
 }
 
 .copied:hover {
-  background: limegreen;
+      background: limegreen;
 }
 
 .main__access-level {
-  margin: -70px auto 40px;
-  padding: 10px;
-  width: 70%;
-  border-radius: 5px;
-  background: rgba(21, 91, 173, 0.3);
-  font-family: 'Roboto', sans-serif;
-  color: white;
-  text-align: center;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-      font-weight: 300;
+    margin: -70px auto 40px;
+    padding: 10px;
+    width: 70%;
+    border-radius: 5px;
+    background: rgba(21, 91, 173, 0.3);
+    font-family: 'Roboto', sans-serif;
+    color: white;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+        font-weight: 300;
+}
 
+table {
+    font-family: 'Yaldevi', sans-serif;
+}
 
+table tr:nth-child(odd) {
+    background: lightgray;
+}
+
+tr,
+th,
+td {
+    padding: 5px;
+    border: 1px solid black;
+    text-align: center;
+}
+
+.main__table {
+    width: 70%;
+}
+
+.main__table--header {
+  background: rgba(21, 91, 173, 0.5);
+}
+
+.simple {
+    margin: 10px auto;
+}
+.main___button--initial {
+    margin: -80px auto 30px;
+    width: 40%;
+    font-size: 1rem;
 }

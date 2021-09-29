@@ -1,4 +1,4 @@
-const { hash } = window.location;
+const { hash, origin } = window.location;
 const hashArray = hash.substring(1).split("&");
 const hashParams = {};
 
@@ -19,6 +19,8 @@ if (hashParams['access_token']) {
   const accessTokenText = document.createTextNode(hashParams['access_token'])
   const button = document.createElement('button');
   const textButton = document.createTextNode('Copy token to clipboard');
+  const button2 = document.createElement('button');
+  const textButton2 = document.createTextNode('Log  out');
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(hashParams['access_token']);
@@ -44,23 +46,28 @@ if (hashParams['access_token']) {
 
   accessTokenArea.append(accessTokenText);
 
-  button.className = 'main__button--copy';
+  button.className = 'main__button';
   button.addEventListener("click", copyToClipboard);
   button.append(textButton);
+
+  button2.className = 'main__button';
+  button2.addEventListener("click", () => window.location.href = `${origin}/logout`);
+  button2.append(textButton2);
 
   mainSection.appendChild(header);
   mainSection.appendChild(paragraph1);
   mainSection.appendChild(accessTokenArea);
   mainSection.appendChild(button);
+  mainSection.appendChild(button2);
 
 } else {
   const mainSection = document.querySelector('.main__wrapper');
   const paragraph1 = document.createElement('p');
   const paragraph2 = document.createElement('p');
-  const fakeButton = document.createElement('a');
+  const button = document.createElement('button');
+  const textButton = document.createTextNode('LOG IN');
   const text1 = document.createTextNode('It seems that you haven\'t already logged in.');
   const text2 = document.createTextNode('Please login to get your access token.');
-  const textButton = document.createTextNode('LOG IN');
 
   paragraph1.className = 'main__text';
   paragraph1.append(text1);
@@ -68,11 +75,11 @@ if (hashParams['access_token']) {
   paragraph2.className = 'main__text';
   paragraph2.append(text2);
 
-  fakeButton.className = 'main__button';
-  fakeButton.setAttribute('href', 'http://localhost:5000/login');
-  fakeButton.append(textButton);
+  button.className = 'main__button';
+  button.addEventListener("click", () => window.location.href = `${origin}/login`);
+  button.append(textButton);
 
   mainSection.appendChild(paragraph1);
   mainSection.appendChild(paragraph2);
-  mainSection.appendChild(fakeButton);
+  mainSection.appendChild(button);
 }
